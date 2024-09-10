@@ -1,0 +1,44 @@
+.sidebar a {
+    display: block;
+    padding: 20px;
+    color: black;
+    text-decoration: none;
+    margin: 10px 0;
+  }
+  
+  .sidebar a:hover {
+    background-color: #ddd;
+  }
+  .sidebar {
+    width: 250px; /* Adjust width as necessary */
+    background-color: #f8f9fa; /* Light background color */
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .sidebar-title {
+    font-size: 24px; /* Increase font size */
+    font-weight: bold; /* Make it bold */
+    margin-bottom: 20px; /* Space below the title */
+    color: #333; /* Darker color for the title */
+  }
+  
+  .sidebar-link {
+    display: flex;
+    align-items: center; /* Center the icon and text */
+    text-decoration: none; /* Remove underline */
+    color: #007bff; /* Link color */
+    margin: 10px 0; /* Space between links */
+    padding: 10px; /* Padding for better click area */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s; /* Smooth background transition */
+  }
+  
+  .sidebar-link:hover {
+    background-color: #e9ecef; /* Change background on hover */
+  }
+  
+  .sidebar-icon {
+    margin-right: 10px; /* Space between icon and text */
+    font-size: 20px; /* Icon size */
+  }
