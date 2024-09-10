@@ -2,9 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './Components/Home';
 import Login from './Components/Login';
-import Dashboard from './Components/Dashboard';
-import AddProducts from './Components/AddProducts'; // Ensure the component name is capitalized
-import ProductDetails from './Components/ProductDetails';
+import Dashboard from './Components/Dashboard/Dashboard';
+import AddProducts from './Components/addProducts/AddProducts'; // Ensure the component name is capitalized
+import ProductDetails from './Components/ProductDetails/ProductDetails';
 import './Styles/App.css';
 import Footer from './Components/Footer';
 

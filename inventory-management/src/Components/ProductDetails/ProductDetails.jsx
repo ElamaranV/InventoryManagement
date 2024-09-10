@@ -1,6 +1,6 @@
 import React from "react";
 import './ProductDetails.css'; 
-import Sidebar from './Sidebar';
+import Sidebar from '../Sidebar';
 
 const ProductDetails = () => {
     return (

@@ -2,7 +2,7 @@ import React from 'react';
 import './Dashboard.css';
 import { FaShoppingCart, FaMoneyBillAlt, FaUserCircle } from 'react-icons/fa';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import Sidebar from './Sidebar';
+import Sidebar from '../Sidebar';
 
 const data = [
   { name: 'Jan', sales: 4000 },
