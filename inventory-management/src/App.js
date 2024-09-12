@@ -18,7 +18,6 @@ const App = () => {
         <Route path="/addproduct" element={<AddProducts />} /> {/* Updated route path */}
         <Route path= "/productdetails" element={<ProductDetails/>}></Route>
       </Routes>
-      <Footer/>
     </Router>
   );
 };

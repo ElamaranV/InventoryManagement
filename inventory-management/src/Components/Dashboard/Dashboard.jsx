@@ -3,6 +3,7 @@ import './Dashboard.css';
 import { FaShoppingCart, FaMoneyBillAlt, FaUserCircle } from 'react-icons/fa';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import Sidebar from '../Sidebar';
+import Footer from '../Footer';
 
 const data = [
   { name: 'Jan', sales: 4000 },
@@ -16,28 +17,31 @@ const data = [
 
 const Dashboard = () => {
   return (
-    <div className="dashboard-container">
+    <div className="dashboard-layout">
       <Sidebar />
       <div className="dashboard-content">
-        <h2>Dashboard</h2>
+        <h2>Ecommerce Dashboard</h2>
+        <p className="dashboard-subtitle">Here’s what’s going on at your business right now</p>
         <div className="dashboard-cards">
           <div className="card">
             <FaShoppingCart className="card-icon" />
-            <h3>Total Products</h3>
-            <p>500</p>
+            <h3>57 new orders</h3>
+            <p>Awaiting processing</p>
           </div>
           <div className="card">
             <FaMoneyBillAlt className="card-icon" />
-            <h3>Total Revenue</h3>
-            <p>$50,000</p>
+            <h3>5 orders</h3>
+            <p>On hold</p>
           </div>
           <div className="card">
             <FaUserCircle className="card-icon" />
-            <h3>Total Customers</h3>
-            <p>200</p>
+            <h3>15 products</h3>
+            <p>Out of stock</p>
           </div>
         </div>
         <div className="dashboard-chart">
+          <h3>Total sells</h3>
+          <p>Payment received across all channels</p>
           <LineChart width={976} height={400} data={data}>
             <XAxis dataKey="name" />
             <YAxis />
@@ -47,19 +51,7 @@ const Dashboard = () => {
             <Line type="monotone" dataKey="sales" stroke="#8884d8" />
           </LineChart>
         </div>
-        <div className="dashboard-cards">
-          <div className="card">
-            <span className="small-text">Last 7 Days</span>
-            <h3>Total Orders</h3>
-            <p>150</p>
-          </div>
-          <div className="card">
-            <span className="small-text">Last 7 Days</span>
-            <h3>New Customers</h3>
-            <p>25</p>
-          </div>
-        </div>
-        <div className="dashboard-customers">
+        <div className="dashboard-recent">
           <h3>Recent Customers</h3>
           <table>
             <thead>
@@ -89,6 +81,7 @@ const Dashboard = () => {
           </table>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

@@ -1,23 +1,21 @@
-/* Footer.css */
 .footer {
-    background-color: #f8f9fa; /* Light background color */
-    padding: 20px;
-    text-align: center;
-    position: relative;
-    bottom: 0;
-    width: 100%;
-  }
-  
-  .footer-content {
-    color: #333; /* Darker text color */
-    font-size: 14px; /* Font size */
-  }
-  
-  .footer a {
-    color: #007bff; /* Link color */
-    text-decoration: none;
-  }
-  
-  .footer a:hover {
-    text-decoration: underline; /* Underline on hover */
-  }
+  background-color: #f8f9fa;
+  padding: 20px;
+  text-align: center;
+  width: 100%;
+  margin-top: auto; 
+}
+
+.footer-content {
+  color: #333; 
+  font-size: 14px;
+}
+
+.footer a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
