@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { FaPlus, FaListAlt, FaUsers } from 'react-icons/fa';
+import { IoAddCircleSharp } from "react-icons/io5";
 import './Sidebar.css';
 import Footer from './Footer';
 
@@ -24,11 +25,17 @@ const Sidebar = () => {
             </NavLink>
           </li>
           <li className="nav-item">
-            <NavLink to="/customer-details" className="nav-link sidebar-link">
+            <NavLink to="/customerDetails" className="nav-link sidebar-link">
               <FaUsers className="sidebar-icon" />
               Customer Details
             </NavLink>
-          </li>
+            </li>
+            <li className="nav-item">
+            <NavLink to="/AddCustomer" className="nav-link sidebar-link">
+              <IoAddCircleSharp className='sidebar-icon' />
+              Add Customer
+            </NavLink>
+            </li>
         </ul>
       </div>
     </nav>

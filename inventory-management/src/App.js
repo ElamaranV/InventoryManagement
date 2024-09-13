@@ -7,6 +7,8 @@ import AddProducts from './Components/addProducts/AddProducts'; // Ensure the co
 import ProductDetails from './Components/ProductDetails/ProductDetails';
 import './Styles/App.css';
 import Footer from './Components/Footer';
+import CustomerDetails from './Components/CustomerDetails/customerDetails';
+import AddCustomer from './Components/addCustomer/AddCustomer';
 
 const App = () => {
   return (
@@ -17,6 +19,8 @@ const App = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/addproduct" element={<AddProducts />} /> {/* Updated route path */}
         <Route path= "/productdetails" element={<ProductDetails/>}></Route>
+        <Route path="/customerDetails" element={<CustomerDetails/>}></Route>
+        <Route path="/AddCustomer" element={<AddCustomer/>}></Route>
       </Routes>
     </Router>
   );

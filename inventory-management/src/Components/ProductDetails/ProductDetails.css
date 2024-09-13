@@ -1,5 +1,6 @@
 .ProductDetails-Container {
     display: flex;
+    margin-left: 200px;;
 }
 
 .ProductDetails-Content {
