@@ -1,6 +1,7 @@
 import React from 'react';
 import './customerDetails.css';
 import { FaUserAlt, FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
+import Sidebar from '../Sidebar';
 
 const CustomerDetails = () => {
   const customers = [
@@ -10,7 +11,10 @@ const CustomerDetails = () => {
   ];
 
   return (
+    <div>
+      <Sidebar/>
     <div className="container mt-4 customer-details">
+
       <h2 className="text-center mb-4">Customer Details</h2>
 
       <div className="row">
@@ -58,6 +62,7 @@ const CustomerDetails = () => {
           </tbody>
         </table>
       </div>
+    </div>
     </div>
   );
 };

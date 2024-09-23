@@ -18,7 +18,7 @@ const data = [
 const Dashboard = () => {
   return (
     <div className="dashboard-layout">
-      <Sidebar />
+      <Sidebar/>
       <div className="dashboard-content">
         <h2>Ecommerce Dashboard</h2>
         <p className="dashboard-subtitle">Here’s what’s going on at your business right now</p>
@@ -81,7 +81,6 @@ const Dashboard = () => {
           </table>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

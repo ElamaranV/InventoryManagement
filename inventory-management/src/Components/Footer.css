@@ -1,16 +1,18 @@
+/* Footer styles */
 .footer {
   background-color: #f8f9fa;
   padding: 20px;
   text-align: center;
   width: 100%;
-  margin-top: auto; 
+  margin-top: auto; /* This will push the footer to the bottom when needed */
 }
 
 .footer-content {
-  color: #333; 
+  color: #333;
   font-size: 14px;
 }
 
+/* Footer links */
 .footer a {
   color: #007bff;
   text-decoration: none;

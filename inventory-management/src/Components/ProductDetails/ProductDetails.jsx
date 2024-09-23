@@ -1,6 +1,7 @@
 import React from "react";
 import './ProductDetails.css'; 
 import Sidebar from '../Sidebar';
+import Footer from "../Footer";
 
 const ProductDetails = () => {
     return (
@@ -72,6 +73,7 @@ const ProductDetails = () => {
                 </table>
             </div>
         </div>
+
     );
 }
 

@@ -103,7 +103,6 @@ const AddCustomer = () => {
         </div>
       </div>
     </div>
-    <Footer></Footer>
     </>
   );
 };

@@ -2,16 +2,23 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { FaPlus, FaListAlt, FaUsers } from 'react-icons/fa';
 import { IoAddCircleSharp } from "react-icons/io5";
+import { MdDashboard } from "react-icons/md";
 import './Sidebar.css';
 import Footer from './Footer';
 
 const Sidebar = () => {
   return (
     <>
-    <nav className="navbar navbar-expand-lg navbar-light bg-light sidebar">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark sidebar">
       <h1 className="navbar-brand sidebar-title">Ea Inventory</h1>
       <div className="navbar-collapse">
         <ul className="navbar-nav flex-column">
+          <li className="nav-item">
+            <NavLink to="/dashboard" className="nav-link sidebar-link">
+              <MdDashboard className="sidebar-icon" />
+              Dashboard
+            </NavLink>
+          </li>
           <li className="nav-item">
             <NavLink to="/addproduct" className="nav-link sidebar-link">
               <FaPlus className="sidebar-icon" />
@@ -29,13 +36,13 @@ const Sidebar = () => {
               <FaUsers className="sidebar-icon" />
               Customer Details
             </NavLink>
-            </li>
-            <li className="nav-item">
+          </li>
+          <li className="nav-item">
             <NavLink to="/AddCustomer" className="nav-link sidebar-link">
               <IoAddCircleSharp className='sidebar-icon' />
               Add Customer
             </NavLink>
-            </li>
+          </li>
         </ul>
       </div>
     </nav>
