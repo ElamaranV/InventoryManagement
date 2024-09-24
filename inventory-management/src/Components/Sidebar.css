@@ -22,9 +22,9 @@
 .sidebar {
   font-family: "Urbanist", sans-serif;
   font-weight: 400;
-  width: 210px;
+  width: 190px;
   background-color: #1d181c;
-  padding: 20px;
+  padding: 15px;
   height: 100vh;
   position: fixed;
   top: 0;
@@ -37,7 +37,7 @@
 
 /* Sidebar Title */
 .sidebar-title {
-  font-size: 28px;
+  font-size: 18px;
   font-weight: normal;
   color: #fbfbfb;
   margin-bottom: 30px;
@@ -51,9 +51,9 @@
 
 
 .sidebar-logo {
-  width: 40px; /* Adjust the image size */
+  width: 40px;
   height: 40px;
-  margin-right: 10px; /* Space between the image and the title */
+  margin-right: 10px; 
 }
 
 /* Sidebar Navigation Links */

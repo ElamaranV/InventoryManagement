@@ -1,34 +1,106 @@
+/* Container styling */
 .login-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: white;
-  color: black;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  font-family: 'Poppins', sans-serif;
+  padding: 20px;
+  box-sizing: border-box;
+  color: #fff;
 }
 
+/* Form styling */
 form {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
+/* Heading styling */
+h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #f0f4ff;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Input styling */
 input {
-  margin: 10px;
-  padding: 10px;
-  border: 1px solid black;
-  border-radius: 5px;
+  width: 100%;
+  padding: 12px 20px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+input::placeholder {
+  color: #c4c4c4;
+}
+
+/* Button styling */
 button {
-  padding: 10px;
-  background-color: black;
-  color: white;
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
   border: none;
-  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #f4f0ff;
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
   cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 button:hover {
-  background-color: grey;
+  background: linear-gradient(135deg, #6a11cb 20%, #2575fc 80%);
+  transform: translateY(-2px);
+}
+
+/* Button pseudo-elements for stylish effects */
+button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+button:hover::before {
+  opacity: 1;
+}
+
+/* Anchor link styling */
+form a {
+  margin-top: 15px;
+  color: #f4f4f4;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+form a:hover {
+  text-decoration: underline;
+  color: #d1e9ff;
 }
