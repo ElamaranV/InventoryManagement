@@ -9,8 +9,9 @@ import Footer from './Footer';
 const Sidebar = () => {
   return (
     <>
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark sidebar">
-      <h1 className="navbar-brand sidebar-title">Ea Inventory</h1>
+    <nav className="navbar navbar-expand-lg sidebar">
+      <img src="/logo.jpg" alt='logo' className='sidebar-logo'></img>
+      <h1 className="navbar-brand sidebar-title urbanist-bold">Ea Inventory</h1>
       <div className="navbar-collapse">
         <ul className="navbar-nav flex-column">
           <li className="nav-item">

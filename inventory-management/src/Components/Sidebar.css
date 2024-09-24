@@ -1,7 +1,29 @@
+.urbanist-light {
+  font-weight: 300;
+}
+
+.urbanist-regular {
+  font-weight: 400;
+}
+
+.urbanist-medium {
+  font-weight: 500;
+}
+
+.urbanist-semibold {
+  font-weight: 600;
+}
+
+.urbanist-bold {
+  font-weight: 700;
+}
+
 /* Sidebar Container */
 .sidebar {
+  font-family: "Urbanist", sans-serif;
+  font-weight: 400;
   width: 210px;
-  background-color: #ffffff; /* Black background */
+  background-color: #1d181c;
   padding: 20px;
   height: 100vh;
   position: fixed;
@@ -17,22 +39,30 @@
 .sidebar-title {
   font-size: 28px;
   font-weight: normal;
-  color: #07345e;
+  color: #fbfbfb;
   margin-bottom: 30px;
-  padding-bottom: 15px;
+  margin-left: 10px;
+  padding-bottom: 5px;
   font-family: 'Roboto', sans-serif;
   text-transform: uppercase;
   letter-spacing: 1px;
   border-bottom: 2px solid #ff6b00; /* Orange border */
 }
 
+
+.sidebar-logo {
+  width: 40px; /* Adjust the image size */
+  height: 40px;
+  margin-right: 10px; /* Space between the image and the title */
+}
+
 /* Sidebar Navigation Links */
 .navbar-nav {
-  margin-top: 20px;
+  margin-top: 5px;
 }
 
 .nav-item {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .sidebar-link {
@@ -40,7 +70,7 @@
   align-items: center;
   padding: 12px 20px;
   font-size: 16px;
-  color: #ff6b00; /* Orange links */
+  color: #ffffff; /* Orange links */
   text-decoration: none;
   border-radius: 8px;
   transition: all 0.3s ease-in-out;
@@ -49,7 +79,7 @@
 
 .sidebar-link:hover {
   background-color: #1a1a1a; /* Dark hover background */
-  color: #ff6b00; /* Keep the link orange on hover */
+  color: #ff2f3e; /* Keep the link orange on hover */
   transform: translateX(5px);
 }
 
@@ -72,8 +102,8 @@
 
 /* Active link style */
 .sidebar-link.active {
-  background-color: rgba(255, 107, 0, 0.2); /* Subtle orange background */
-  color: #ff9d4d;
+  background-color: #ff2f3e; /* Subtle orange background */
+  color: #fff;
   font-weight: 600;
 }
 
