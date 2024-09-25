@@ -13,7 +13,7 @@
 }
 
 /* Form styling */
-form {
+.login-container form {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   padding: 40px;
@@ -27,7 +27,7 @@ form {
 }
 
 /* Heading styling */
-h2 {
+.login-container h2 {
   font-size: 2rem;
   margin-bottom: 20px;
   color: #f0f4ff;
@@ -54,7 +54,7 @@ input::placeholder {
 }
 
 /* Button styling */
-button {
+.login-container button {
   width: 100%;
   padding: 12px;
   border-radius: 8px;
@@ -69,13 +69,13 @@ button {
   overflow: hidden;
 }
 
-button:hover {
+.login-container button:hover {
   background: linear-gradient(135deg, #6a11cb 20%, #2575fc 80%);
   transform: translateY(-2px);
 }
 
 /* Button pseudo-elements for stylish effects */
-button::before {
+.login-container button:before {
   content: "";
   position: absolute;
   top: 0;
@@ -86,9 +86,9 @@ button::before {
   background: rgba(255, 255, 255, 0.1);
   opacity: 0;
   transition: opacity 0.3s ease;
-}
+} 
 
-button:hover::before {
+.login-container button:hover::before {
   opacity: 1;
 }
 
