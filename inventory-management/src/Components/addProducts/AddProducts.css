@@ -1,0 +1,126 @@
+.add-product-container {
+  display: inline;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+
+}
+
+.add-product-contents{
+  display: flex;
+  margin: 20px;
+  padding: 10px;
+  
+}
+
+.header {
+  margin-bottom: 20px;
+}
+
+.header h3 {
+  color: #999;
+  font-size: 14px;
+}
+
+.header h1 {
+  font-size: 28px;
+  margin: 0;
+}
+
+.header p {
+  font-size: 16px;
+  color: #555;
+}
+
+.main-content {
+  margin-left: 200px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.product-info {
+  grid-column: span 2;
+}
+
+.product-title, .product-description, .display-images {
+  margin-bottom: 20px;
+}
+
+.product-title input, .product-description textarea, .organize input, .organize select, .pricing input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  margin-right: 10 px;
+}
+
+.product-description textarea {
+  height: 100px;
+}
+
+.display-images .image-upload {
+  border: 1px dashed #ccc;
+  text-align: center;
+  padding: 30px;
+  border-radius: 5px;
+  background-color: #f7f7f7;
+  color: #999;
+}
+
+.image-upload span {
+  color: #007bff;
+  cursor: pointer;
+}
+
+.organize, .pricing-section, .variants {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 20px;
+  background-color: #fff;
+}
+
+.organize h3, .pricing-section h3, .variants h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.organize input, .organize select, .pricing input {
+  width: 100%;
+}
+
+.variant-options .option {
+  margin-bottom: 10px;
+}
+
+.save-publish {
+  grid-column: span 2;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.discard-btn, .save-draft-btn, .publish-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.discard-btn {
+  background-color: #f5f5f5;
+  color: #555;
+}
+
+.save-draft-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.publish-btn {
+  background-color: #28a745;
+  color: white;
+}

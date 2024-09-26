@@ -1,0 +1,65 @@
+.customer-details {
+    padding: 20px;
+  }
+  
+  .customer-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .customer-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .customer-icon {
+    text-align: center;
+    margin-bottom: 15px;
+  }
+  
+  .customer-icon-img {
+    font-size: 50px;
+    color: #007bff;
+  }
+  
+  .card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .card-text {
+    font-size: 1rem;
+    color: #555;
+    text-align: center;
+  }
+  
+  .table-responsive {
+    margin-top: 20px;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    background-color: #fff;
+  }
+  
+  .table th,
+  .table td {
+    padding: 12px;
+    text-align: left;
+    border-top: 1px solid #dee2e6;
+  }
+  
+  .table thead th {
+    background-color: #343a40;
+    color: white;
+  }
+  
+  .table-hover tbody tr:hover {
+    background-color: #f1f1f1;
+  }
+  
