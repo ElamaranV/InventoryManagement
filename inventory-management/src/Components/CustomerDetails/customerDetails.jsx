@@ -15,7 +15,7 @@ const CustomerDetails = () => {
       <Sidebar/>
     <div className="container mt-4 customer-details">
 
-      <h2 className="text-center mb-4">Customer Details</h2>
+      <h2 className="text-center mb-4">Vendor Details</h2>
 
       <div className="row">
         {customers.map((customer) => (
@@ -38,7 +38,7 @@ const CustomerDetails = () => {
         ))}
       </div>
 
-      <h3 className="text-center mb-4 mt-5">Customer List</h3>
+      <h3 className="text-center mb-4 mt-5">Vendor List</h3>
 
       <div className="table-responsive">
         <table className="table table-bordered table-hover">

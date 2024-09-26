@@ -75,7 +75,7 @@ input::placeholder {
 }
 
 /* Button pseudo-elements for stylish effects */
-.login-container button::before {
+button::before {
   content: "";
   position: absolute;
   top: 0;
@@ -86,7 +86,7 @@ input::placeholder {
   background: rgba(255, 255, 255, 0.1);
   opacity: 0;
   transition: opacity 0.3s ease;
-}
+} 
 
 .login-container button:hover::before {
   opacity: 1;

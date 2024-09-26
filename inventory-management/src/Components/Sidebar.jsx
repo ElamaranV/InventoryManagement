@@ -35,7 +35,7 @@ const Sidebar = () => {
           <li className="nav-item">
             <NavLink to="/customerDetails" className="nav-link sidebar-link">
               <FaUsers className="sidebar-icon" />
-              Customer Details
+              Vendor  Details
             </NavLink>
           </li>
           <li className="nav-item">
