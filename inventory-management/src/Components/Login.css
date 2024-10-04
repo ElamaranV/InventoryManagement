@@ -13,7 +13,7 @@
 }
 
 /* Form styling */
-.login-container form {
+form {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   padding: 40px;
@@ -27,7 +27,7 @@
 }
 
 /* Heading styling */
-.login-container h2 {
+h2 {
   font-size: 2rem;
   margin-bottom: 20px;
   color: #f0f4ff;
@@ -54,7 +54,7 @@ input::placeholder {
 }
 
 /* Button styling */
-.login-container button {
+button {
   width: 100%;
   padding: 12px;
   border-radius: 8px;
@@ -69,7 +69,7 @@ input::placeholder {
   overflow: hidden;
 }
 
-.login-container button:hover {
+button:hover {
   background: linear-gradient(135deg, #6a11cb 20%, #2575fc 80%);
   transform: translateY(-2px);
 }
@@ -88,7 +88,7 @@ button::before {
   transition: opacity 0.3s ease;
 } 
 
-.login-container button:hover::before {
+button:hover::before {
   opacity: 1;
 }
 
