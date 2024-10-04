@@ -1,106 +1,96 @@
+
+
 /* Container styling */
 .login-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
   justify-content: center;
-  height: 100vh;
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-  font-family: 'Poppins', sans-serif;
-  padding: 20px;
-  box-sizing: border-box;
-  color: #fff;
+  align-items: center;
+  display: flex;
+  margin-left: 35%;
 }
 
 /* Form styling */
-.login-container form {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  width: 100%;
-  max-width: 400px;
+.login-form {
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
 /* Heading styling */
-.login-container h2 {
-  font-size: 2rem;
-  margin-bottom: 20px;
-  color: #f0f4ff;
-  letter-spacing: 1px;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+.login-title {
+  color: #333;
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 24px;
+  text-align: center;
 }
 
 /* Input styling */
-.login-container input {
-  width: 100%;
-  padding: 12px 20px;
-  margin: 10px 0;
-  border: none;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-  font-size: 1rem;
-  outline: none;
-  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
+.input-group {
+  margin-bottom: 20px;
 }
 
-.login-container input::placeholder {
-  color: #c4c4c4;
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #555;
+  font-size: 14px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #4a90e2;
 }
 
 /* Button styling */
-.login-container button {
-  width: 100%;
-  padding: 12px;
-  border-radius: 8px;
+.login-button {
+  background-color: #4a90e2;
+  color: white;
   border: none;
-  font-size: 1rem;
-  font-weight: 500;
-  color: #f4f0ff;
-  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  border-radius: 4px;
+  padding: 12px;
+  font-size: 16px;
   cursor: pointer;
-  transition: transform 0.3s ease, background 0.3s ease;
-  position: relative;
-  overflow: hidden;
+  transition: background-color 0.3s ease;
 }
 
-.login-container button:hover {
-  background: linear-gradient(135deg, #6a11cb 20%, #2575fc 80%);
-  transform: translateY(-2px);
+.login-button:hover {
+  background-color: #3a7bd5;
 }
 
-/* Button pseudo-elements for stylish effects */
-.login-container button::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-} 
-
-.login-container button:hover::before {
-  opacity: 1;
+/* Additional options styling */
+.additional-options {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
 }
 
-/* Anchor link styling */
-.login-container form a {
-  margin-top: 15px;
-  color: #f4f4f4;
+.additional-options a {
+  color: #4a90e2;
   text-decoration: none;
-  font-size: 0.9rem;
+  transition: color 0.3s ease;
 }
 
-.login-container form a:hover {
-  text-decoration: underline;
-  color: #d1e9ff;
+.additional-options a:hover {
+  color: #3a7bd5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .login-container {
+    padding: 30px 20px;
+  }
 }
