@@ -124,3 +124,12 @@
   background-color: #28a745;
   color: white;
 }
+
+.sub-menu {
+  list-style-type: none;
+  padding-left: 20px;
+}
+
+.sub-menu .nav-link {
+  padding: 5px 15px;
+}

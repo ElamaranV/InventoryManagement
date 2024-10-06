@@ -5,6 +5,7 @@ import Sidebar from '../Sidebar';
 
 const AddProduct = () => {
   return (
+    <>
     <div className="add-product-container">
       <div className='add-product-contents'>
         
@@ -105,6 +106,8 @@ const AddProduct = () => {
      
       </div>
     </div>
+    <Footer></Footer>
+    </>
   );
 };
 

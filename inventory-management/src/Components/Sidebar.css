@@ -35,19 +35,22 @@
   overflow-y: auto;
 }
 
-/* Sidebar Title */
+sidebar
+
+
 .sidebar-title {
   font-size: 18px;
-  font-weight: normal;
-  color: #fbfbfb;
+  font-weight:500;
+  color: #fff;
   margin-bottom: 30px;
   margin-left: 10px;
   padding-bottom: 5px;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Urbanist', sans-serif;
   text-transform: uppercase;
   letter-spacing: 1px;
-  border-bottom: 2px solid #ff6b00; /* Orange border */
+  border-bottom: 2px solid #ff6b00; 
 }
+
 
 
 .sidebar-logo {
@@ -70,50 +73,52 @@
   align-items: center;
   padding: 12px 20px;
   font-size: 16px;
-  color: #ffffff; /* Orange links */
+  color: #ffffff; 
   text-decoration: none;
   border-radius: 8px;
   transition: all 0.3s ease-in-out;
   font-weight: 500;
+  cursor: pointer;
 }
 
 .sidebar-link:hover {
-  background-color: #1a1a1a; /* Dark hover background */
-  color: #ff2f3e; /* Keep the link orange on hover */
+  background-color: #1a1a1a; 
+  color: #ff2f3e; 
   transform: translateX(5px);
 }
 
-/* Sidebar Icon Styling */
+
+
 .sidebar-icon {
   margin-right: 15px;
   font-size: 20px;
 }
 
-/* Glow effect for hover */
+
 .sidebar-link:hover .sidebar-icon {
   filter: drop-shadow(0 0 5px rgba(255, 107, 0, 0.5));
   transition: filter 0.3s ease;
 }
 
-/* Navbar collapse customization */
+
 .navbar-collapse {
   flex-grow: 0;
 }
 
-/* Active link style */
+
 .sidebar-link.active {
-  background-color: #ff2f3e; /* Subtle orange background */
+  background-color: #ff2f3e; 
   color: #fff;
   font-weight: 600;
 }
 
-/* Scrollbar customization for webkit browsers */
+
 .sidebar::-webkit-scrollbar {
   width: 6px;
 }
 
 .sidebar::-webkit-scrollbar-track {
-  background: #000000; /* Match the background */
+  background: #000000; 
 }
 
 .sidebar::-webkit-scrollbar-thumb {
@@ -122,5 +127,6 @@
 }
 
 .sidebar::-webkit-scrollbar-thumb:hover {
-  background-color: #ff6b00; /* Orange scrollbar on hover */
+  background-color: #ff6b00;
 }
+

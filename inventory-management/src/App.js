@@ -5,6 +5,7 @@ import Login from './Components/Login';
 import Dashboard from './Components/Dashboard/Dashboard';
 import AddProducts from './Components/addProducts/AddProducts'; 
 import ProductDetails from './Components/ProductDetails/ProductDetails';
+import ProductCategorization from './Components/ProductCategorization/productcategorization';
 import './Styles/App.css';
 import Footer from './Components/Footer';
 import CustomerDetails from './Components/CustomerDetails/customerDetails';
@@ -23,9 +24,9 @@ const App = () => {
             <Route path="/productdetails" element={<ProductDetails />} />
             <Route path="/customerDetails" element={<CustomerDetails />} />
             <Route path="/AddCustomer" element={<AddCustomer />} />
+            <Route path= "/ProductCategorization" element={<ProductCategorization/>} />
           </Routes>
         </div>
-        <Footer /> {/* Footer outside the content */}
       </Router>
     </div>
   );
