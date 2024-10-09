@@ -52,7 +52,7 @@ const Dashboard = () => {
           </LineChart>
         </div>
         <div className="dashboard-recent">
-          <h3>Recent Customers</h3>
+          <h3>Recent Vendors</h3>
           <table>
             <thead>
               <tr>

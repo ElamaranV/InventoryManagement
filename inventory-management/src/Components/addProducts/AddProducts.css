@@ -133,3 +133,41 @@
 .sub-menu .nav-link {
   padding: 5px 15px;
 }
+
+.display-images {
+  width: 100%;
+  max-width: 600px;
+  margin: 20px 0;
+}
+
+.image-upload {
+  border: 2px dashed #ccc;
+  padding: 20px;
+  text-align: center;
+}
+
+.browse-button {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.browse-button:hover {
+  background-color: #e0e0e0;
+}
+
+.image-preview {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+}
+
+.preview-image {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 4px;
+}
