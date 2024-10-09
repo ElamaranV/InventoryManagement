@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaSearch, FaEdit, FaTrash } from 'react-icons/fa';
 import './ProductDetails.css';
 import Sidebar from '../Sidebar';
+import axios from 'axios';
 import Footer from "../Footer";
 
 const ProductDetails = () => {
@@ -10,17 +11,15 @@ const ProductDetails = () => {
     const [categoryFilter, setCategoryFilter] = useState('');
     const [vendorFilter, setVendorFilter] = useState('');
 
-    // Simulated data fetching
+    // Fetch products from the backend
     useEffect(() => {
-        // In a real application, this would be an API call
         const fetchProducts = async () => {
-            // Simulated API response
-            const response = [
-                { id: 1, name: 'Product 1', price: 10.00, category: 'Category 1', tags: ['tag1', 'tag2'], vendor: 'Vendor 1', publishedOn: '2024-01-01', imageUrl: 'https://via.placeholder.com/50' },
-                { id: 2, name: 'Product 2', price: 20.00, category: 'Category 2', tags: ['tag3', 'tag4'], vendor: 'Vendor 2', publishedOn: '2024-02-01', imageUrl: 'https://via.placeholder.com/50' },
-                // Add more products as needed
-            ];
-            setProducts(response);
+           try {
+            const response = await axios.get('http://localhost:3000/api/products');
+            setProducts(response.data);
+           } catch (error) {
+               console.error("Error fetching products: ", error);
+           }
         };
 
         fetchProducts();
@@ -39,17 +38,16 @@ const ProductDetails = () => {
     };
 
     const handleEdit = (id) => {
-        // Implement edit functionality
         console.log(`Edit product with id: ${id}`);
     };
 
     const handleDelete = (id) => {
-        // Implement delete functionality
         console.log(`Delete product with id: ${id}`);
     };
 
-    const filteredProducts = products.filter(product => 
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    // Apply filters
+    const filteredProducts = products.filter(product =>
+        product.productTitle.toLowerCase().includes(searchTerm.toLowerCase()) &&
         (categoryFilter === '' || product.category === categoryFilter) &&
         (vendorFilter === '' || product.vendor === vendorFilter)
     );
@@ -59,7 +57,6 @@ const ProductDetails = () => {
         <div className="product-details-container">
             <Sidebar />
             <div className="product-details-content">
-            
                 <h1 className="page-title">Products</h1>
 
                 <div className="search-and-filter-container">
@@ -115,17 +112,23 @@ const ProductDetails = () => {
                         </thead>
                         <tbody>
                             {filteredProducts.map(product => (
-                                <tr key={product.id}>
-                                    <td><img src={product.imageUrl} alt={product.name} className="product-image" /></td>
-                                    <td>{product.name}</td>
-                                    <td>${product.price.toFixed(2)}</td>
+                                <tr key={product._id}> {/* Use product._id */}
+                                    <td>
+                                        <img 
+                                            src={product.imageUrl || '/default-image.jpg'}  // Fallback image
+                                            alt={product.productTitle}
+                                            className="product-image" 
+                                        />
+                                    </td>
+                                    <td>{product.productTitle}</td> {/* Ensure field matches */}
+                                    <td>${product.regularPrice.toFixed(2)}</td>
                                     <td>{product.category}</td>
-                                    <td>{product.tags.join(', ')}</td>
+                                    {/* <td>{product.tags ? product.tags.join(', ') : 'No tags'}</td> */}
                                     <td>{product.vendor}</td>
                                     <td>{product.publishedOn}</td>
                                     <td>
-                                        <button onClick={() => handleEdit(product.id)} className="action-button edit"><FaEdit /></button>
-                                        <button onClick={() => handleDelete(product.id)} className="action-button delete"><FaTrash /></button>
+                                        <button onClick={() => handleEdit(product._id)} className="action-button edit"><FaEdit /></button>
+                                        <button onClick={() => handleDelete(product._id)} className="action-button delete"><FaTrash /></button>
                                     </td>
                                 </tr>
                             ))}
@@ -133,12 +136,10 @@ const ProductDetails = () => {
                     </table>
                 </div>
             </div>
-            
-            
         </div>
         <Footer />
         </>
     );
-}
+};
 
 export default ProductDetails;
