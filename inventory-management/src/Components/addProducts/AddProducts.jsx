@@ -3,6 +3,9 @@ import './AddProducts.css';
 import Footer from '../Footer';
 import Sidebar from '../Sidebar';
 import axios from 'axios';
+import alertify from 'alertifyjs';
+import 'alertifyjs/build/css/alertify.css';
+
 
 const AddProduct = () => {
   const [productTitle, setProductTitle] = useState('');
@@ -30,12 +33,13 @@ const AddProduct = () => {
   };
 
   const handlePublish = async () => {
-    // Basic validation check for required fields
+    alertify.set('notifier', 'position', 'top-center');
+  
     if (!productTitle || !productDescription || !category || !vendor || !sku || !regularPrice) {
-      alert("Please fill out all required fields.");
+      alertify.error("Please fill out all required fields.");
       return;
     }
-
+  
     const formData = new FormData();
     formData.append('productTitle', productTitle);
     formData.append('productDescription', productDescription);
@@ -48,17 +52,17 @@ const AddProduct = () => {
     formData.append('weight', weight);
     formData.append('dimensions', dimensions);
     formData.append('variants', JSON.stringify({ option1: variantOption1, option2: variantOption2 }));
-
+  
     images.forEach((image, index) => {
       formData.append(`image${index}`, image);
     });
-
+  
     try {
-      await axios.post('/api/product', formData, {
+      // Update the URL to target the correct server running on port 5000
+      await axios.post('http://localhost:5000/api/product', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      alert('Product Published Successfully!');
-      // Clear form fields after successful submission
+      alertify.success('Product Published Successfully!');
       setProductTitle('');
       setProductDescription('');
       setCategory('');
@@ -73,10 +77,11 @@ const AddProduct = () => {
       setDimensions('');
       setImages([]);
     } catch (error) {
+      alertify.error('There was an error publishing the product!');
       console.error('There was an error publishing the product!', error);
     }
   };
-
+  
   return (
     <>
       <div className="add-product-container">
@@ -90,7 +95,7 @@ const AddProduct = () => {
             </div>
             <div className="product-info">
               <div className="product-title">
-                <label>Product Title</label>
+                <label >Product Title <span style={{ color: 'red' }}>*</span> </label>
                 <input 
                   type="text" 
                   placeholder="Write title here..." 
@@ -99,7 +104,7 @@ const AddProduct = () => {
                 />
               </div>
               <div className="product-description">
-                <label>Product Description</label>
+                <label>Product Description <span style={{ color: 'red' }}>*</span></label>
                 <textarea 
                   placeholder="Write a description here..." 
                   value={productDescription}
@@ -139,7 +144,7 @@ const AddProduct = () => {
             <div className="organize">
               <h3>Organize</h3>
               <div className="category">
-                <label>Category</label>
+                <label>Category <span style={{ color: 'red' }}>*</span></label>
                 <select 
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
@@ -149,7 +154,7 @@ const AddProduct = () => {
                 </select>
               </div>
               <div className="vendor">
-                <label>Vendor</label>
+                <label>Vendor <span style={{ color: 'red' }}>*</span></label>
                 <select 
                   value={vendor}
                   onChange={(e) => setVendor(e.target.value)}
@@ -169,7 +174,7 @@ const AddProduct = () => {
               </div>
              
               <div className="sku">
-                <label>SKU</label>
+                <label>SKU <span style={{ color: 'red' }}>*</span></label>
                 <input 
                   type="text" 
                   placeholder="Stock Keeping Unit" 
@@ -200,7 +205,7 @@ const AddProduct = () => {
             <div className="pricing-section">
               <h3>Pricing</h3>
               <div className="pricing">
-                <label>Regular Price</label>
+                <label>Regular Price <span style={{ color: 'red' }}>*</span></label>
                 <input 
                   type="text" 
                   placeholder="₹₹₹" 

@@ -49,7 +49,7 @@ mongoose.connect(mongoURI, {
 })
 .then(() => {
   console.log('MongoDB connected'); // Log message on successful connection
-})
+})  
 .catch(err => {
   console.error('MongoDB connection error:', err); // Log error message if connection fails
 });
@@ -73,7 +73,7 @@ const productSchema = new mongoose.Schema({
 const Product = mongoose.model('Product', productSchema);
 
 // Route for product creation with multiple images
-app.post('/api/product', upload.array('images'), async (req, res) => {
+app.post('/api/Product', upload.array('images'), async (req, res) => {
   try {
     const { productTitle, productDescription, category, vendor, collection, tags, regularPrice, salePrice, variants, sku, weight, dimensions } = req.body;
     const images = req.files.map(file => file.filename); // Get the uploaded file names
