@@ -3,6 +3,9 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
+const Joi = require('joi');
+require('dotenv').config(); // Load environment variables
 
 // Initialize Express
 const app = express();
@@ -11,6 +14,12 @@ const app = express();
 app.use(cors()); // Enable CORS
 app.use(express.json());
 app.use(express.static('uploads')); // Serve static files from the uploads directory
+
+// Ensure uploads directory exists
+const uploadDir = 'uploads/';
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
 
 // Set up storage for images with Multer
 const storage = multer.diskStorage({
@@ -41,44 +50,69 @@ const upload = multer({
 });
 
 // MongoDB connection
-const mongoURI = 'mongodb://localhost:27017/EA_INVENTORY';
+const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/EA_INVENTORY';
 
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-.then(() => {
-  console.log('MongoDB connected'); // Log message on successful connection
-})  
-.catch(err => {
-  console.error('MongoDB connection error:', err); // Log error message if connection fails
-});
+  .then(() => {
+    console.log('MongoDB connected');
+  })
+  .catch(err => {
+    console.error('MongoDB connection error:', err);
+  });
 
-// Define your product schema and model here (example schema)
+// Define product schema and model
 const productSchema = new mongoose.Schema({
-  productTitle: String,
-  productDescription: String,
-  category: String,
-  vendor: String,
-  collection: String,
-  regularPrice: Number,
-  salePrice: Number,
-  variants: Array,
-  sku: String,
-  weight: Number,
-  dimensions: String,
-  images: [String]
+  productTitle: { type: String, required: true },
+  productDescription: { type: String, required: true },
+  category: { type: String, required: true },
+  vendor: { type: String, required: true },
+  collection: { type: String },
+  regularPrice: { type: Number, required: true },
+  salePrice: { type: Number },
+  variants: { type: Object },
+  sku: { type: String, required: true },
+  weight: { type: Number },
+  dimensions: { type: String },
+  images: { type: [String], required: true } // Store the filenames of uploaded images
 });
 
 const Product = mongoose.model('Product', productSchema);
 
+// Define the validation schema using Joi
+const productValidationSchema = Joi.object({
+  productTitle: Joi.string().required(),
+  productDescription: Joi.string().required(),
+  category: Joi.string().required(),
+  vendor: Joi.string().required(),
+  collection: Joi.string().optional(),
+  regularPrice: Joi.number().required(),
+  salePrice: Joi.number().optional(),
+  sku: Joi.string().required(),
+  weight: Joi.number().optional(),
+  dimensions: Joi.string().optional(),
+  variants: Joi.object().optional()
+});
+
 // Route for product creation with multiple images
-app.post('/api/Product', upload.array('images'), async (req, res) => {
+app.post('/api/Product', upload.array('images', 10), async (req, res) => {
+  // Validate the incoming product data
+  const { error } = productValidationSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+
   try {
-    const { productTitle, productDescription, category, vendor, collection, tags, regularPrice, salePrice, variants, sku, weight, dimensions } = req.body;
+    const {
+      productTitle, productDescription, category, vendor, collection,
+      regularPrice, salePrice, sku, weight, dimensions, variants
+    } = req.body;
+
     const images = req.files.map(file => file.filename); // Get the uploaded file names
 
-    // Create a product object and save it to the database
+    // Create and save new product to the database
     const newProduct = new Product({
       productTitle,
       productDescription,
@@ -87,11 +121,11 @@ app.post('/api/Product', upload.array('images'), async (req, res) => {
       collection,
       regularPrice,
       salePrice,
-      variants,
       sku,
       weight,
       dimensions,
-      images
+      variants: JSON.parse(variants || '{}'), // Parse variants only if provided
+      images // Save image filenames
     });
 
     await newProduct.save();
@@ -103,6 +137,7 @@ app.post('/api/Product', upload.array('images'), async (req, res) => {
 });
 
 // Start the server
-app.listen(5000, () => {
-  console.log('Server running on http://localhost:5000');
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
