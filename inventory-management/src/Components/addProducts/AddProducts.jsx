@@ -53,8 +53,8 @@ const AddProduct = () => {
     formData.append('dimensions', dimensions);
     formData.append('variants', JSON.stringify({ option1: variantOption1, option2: variantOption2 }));
   
-    images.forEach((image) => {
-      formData.append(`images`, image);
+    images.forEach((image, index) => {
+      formData.append(`image${index}`, image);
     });
   
     try {
@@ -129,10 +129,10 @@ const AddProduct = () => {
               </div>
               {images.length > 0 && (
                 <div className="image-preview">
-                  {images.map((images, index) => (
+                  {images.map((image, index) => (
                     <img 
                       key={index} 
-                      src={URL.createObjectURL(images)} 
+                      src={URL.createObjectURL(image)} 
                       alt={`Preview ${index}`} 
                       className="preview-image"
                     />
@@ -149,17 +149,8 @@ const AddProduct = () => {
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                 >
-                  <option>Electronics</option>
-                  <option>Fashion</option>
-                  <option>Beauty and Care</option>
-                  <option>Home and Furniture</option>
-                  <option>Sports</option>
-                  <option>Health and wellness</option>
-                  <option>Books and media</option>
-                  <option>Toys and Baby products</option>
-                  <option>Groceries</option>
-                  <option>Office and Stationary</option>
-
+                  <option>Men's Clothing</option>
+                  <option>Women's Clothing</option>
                 </select>
               </div>
               <div className="vendor">
@@ -168,16 +159,8 @@ const AddProduct = () => {
                   value={vendor}
                   onChange={(e) => setVendor(e.target.value)}
                 >
-                  <option>Electronics</option>
-                  <option>Fashion</option>
-                  <option>Beauty and Care</option>
-                  <option>Home and Furniture</option>
-                  <option>Sports</option>
-                  <option>Health and wellness</option>
-                  <option>Books and media</option>
-                  <option>Toys and Baby products</option>
-                  <option>Groceries</option>
-                  <option>Office and Stationary</option>
+                  <option>Men's Clothing</option>
+                  <option>Women's Clothing</option>
                 </select>
               </div>
               <div className="collection">
