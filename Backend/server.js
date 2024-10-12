@@ -8,75 +8,59 @@ const path = require('path');
 const app = express();
 
 // Middleware
-app.use(cors()); // Enable CORS
+app.use(cors());
 app.use(express.json());
-app.use(express.static('uploads')); // Serve static files from the uploads directory
+app.use(express.static('uploads')); // Serve static files from uploads directory
 
-// Set up storage for images with Multer
+// Multer storage configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // Set your uploads directory here
+    cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Create a unique filename
-  }
+    cb(null, Date.now() + path.extname(file.originalname)); // Append timestamp to avoid duplicate file names
+  },
 });
 
-// Initialize upload with Multer and filter images only
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit for each file
-  fileFilter: (req, file, cb) => {
-    // Accept only images
-    const filetypes = /jpeg|jpg|png|gif/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = filetypes.test(file.mimetype);
-
-    if (mimetype && extname) {
-      return cb(null, true);
-    } else {
-      return cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE')); // Custom error for invalid file types
-    }
-  }
-});
+// Initialize Multer
+const upload = multer({ storage });
 
 // MongoDB connection
-const mongoURI = 'mongodb://localhost:27017/EA_INVENTORY';
-
-mongoose.connect(mongoURI, {
+mongoose.connect('mongodb://localhost:27017/inventory', {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 })
-.then(() => {
-  console.log('MongoDB connected'); // Log message on successful connection
-})  
-.catch(err => {
-  console.error('MongoDB connection error:', err); // Log error message if connection fails
-});
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.log('MongoDB connection error:', err));
 
-// Define your product schema and model here (example schema)
+// Product Schema
 const productSchema = new mongoose.Schema({
-  productTitle: String,
-  productDescription: String,
-  category: String,
-  vendor: String,
-  collection: String,
-  regularPrice: Number,
-  salePrice: Number,
-  variants: Array,
-  sku: String,
-  weight: Number,
-  dimensions: String,
-  images: [String]
+  productTitle: { type: String, required: true },
+  productDescription: { type: String, required: true },
+  category: { type: String, required: true },
+  vendor: { type: String, required: true },
+  collection: { type: String },
+  regularPrice: { type: Number, required: true },
+  salePrice: { type: Number },
+  variants: { type: Object },
+  sku: { type: String, required: true },
+  weight: { type: String },
+  dimensions: { type: String },
+  images: { type: [String] }, // Store image filenames
 });
 
+// Product Model
 const Product = mongoose.model('Product', productSchema);
 
-// Route for product creation with multiple images
-app.post('/api/Product', upload.array('images'), async (req, res) => {
+// Create product endpoint
+app.post('/api/product', upload.array('images'), async (req, res) => {
   try {
-    const { productTitle, productDescription, category, vendor, collection, tags, regularPrice, salePrice, variants, sku, weight, dimensions } = req.body;
+    const { productTitle, productDescription, category, vendor, collection, regularPrice, salePrice, variants, sku, weight, dimensions } = req.body;
     const images = req.files.map(file => file.filename); // Get the uploaded file names
+
+    // Log the request body and images to understand what data you're receiving
+    console.log('Request Body:', req.body);
+    console.log('Uploaded Images:', images);
 
     // Create a product object and save it to the database
     const newProduct = new Product({
@@ -87,22 +71,23 @@ app.post('/api/Product', upload.array('images'), async (req, res) => {
       collection,
       regularPrice,
       salePrice,
-      variants,
+      variants: JSON.parse(variants),
       sku,
       weight,
       dimensions,
-      images
+      images, // Save the images array to the database
     });
 
     await newProduct.save();
     res.status(201).json({ message: 'Product created successfully!', product: newProduct });
   } catch (error) {
-    console.error(error);
+    console.error('Error creating product:', error); // More descriptive error logging
     res.status(500).json({ message: 'Error creating product', error });
   }
 });
 
 // Start the server
-app.listen(5000, () => {
-  console.log('Server running on http://localhost:5000');
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });

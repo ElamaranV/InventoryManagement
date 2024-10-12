@@ -6,7 +6,6 @@ import axios from 'axios';
 import alertify from 'alertifyjs';
 import 'alertifyjs/build/css/alertify.css';
 
-
 const AddProduct = () => {
   const [productTitle, setProductTitle] = useState('');
   const [productDescription, setProductDescription] = useState('');
@@ -34,12 +33,12 @@ const AddProduct = () => {
 
   const handlePublish = async () => {
     alertify.set('notifier', 'position', 'top-center');
-  
+
     if (!productTitle || !productDescription || !category || !vendor || !sku || !regularPrice) {
       alertify.error("Please fill out all required fields.");
       return;
     }
-  
+
     const formData = new FormData();
     formData.append('productTitle', productTitle);
     formData.append('productDescription', productDescription);
@@ -52,17 +51,17 @@ const AddProduct = () => {
     formData.append('weight', weight);
     formData.append('dimensions', dimensions);
     formData.append('variants', JSON.stringify({ option1: variantOption1, option2: variantOption2 }));
-  
+
     images.forEach((image, index) => {
-      formData.append(`image${index}`, image);
+      formData.append(`images`, image);
     });
-  
+
     try {
-      // Update the URL to target the correct server running on port 5000
       await axios.post('http://localhost:5000/api/product', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       alertify.success('Product Published Successfully!');
+      // Clear form fields
       setProductTitle('');
       setProductDescription('');
       setCategory('');
@@ -81,7 +80,7 @@ const AddProduct = () => {
       console.error('There was an error publishing the product!', error);
     }
   };
-  
+
   return (
     <>
       <div className="add-product-container">
@@ -95,7 +94,7 @@ const AddProduct = () => {
             </div>
             <div className="product-info">
               <div className="product-title">
-                <label >Product Title <span style={{ color: 'red' }}>*</span> </label>
+                <label>Product Title <span style={{ color: 'red' }}>*</span></label>
                 <input 
                   type="text" 
                   placeholder="Write title here..." 
@@ -149,8 +148,19 @@ const AddProduct = () => {
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                 >
-                  <option>Men's Clothing</option>
-                  <option>Women's Clothing</option>
+                  <option>Electronics</option>
+                  <option>Fashion</option>
+                  <option>Home & Furniture</option>
+                  <option>Sports and Outdoors</option>
+                  <option>Health and wellness</option>
+                  <option>Toy and Baby products</option>
+                  <option>Books and Media</option>
+                  <option>Groceries</option>
+
+
+
+
+
                 </select>
               </div>
               <div className="vendor">
@@ -159,8 +169,14 @@ const AddProduct = () => {
                   value={vendor}
                   onChange={(e) => setVendor(e.target.value)}
                 >
-                  <option>Men's Clothing</option>
-                  <option>Women's Clothing</option>
+                    <option>Electronics</option>
+                  <option>Fashion</option>
+                  <option>Home & Furniture</option>
+                  <option>Sports and Outdoors</option>
+                  <option>Health and wellness</option>
+                  <option>Toy and Baby products</option>
+                  <option>Books and Media</option>
+                  <option>Groceries</option>
                 </select>
               </div>
               <div className="collection">
@@ -172,7 +188,7 @@ const AddProduct = () => {
                   onChange={(e) => setCollection(e.target.value)}
                 />
               </div>
-             
+
               <div className="sku">
                 <label>SKU <span style={{ color: 'red' }}>*</span></label>
                 <input 
