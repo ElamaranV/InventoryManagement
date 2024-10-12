@@ -8,8 +8,8 @@ import ProductDetails from './Components/ProductDetails/ProductDetails';
 import ProductCategorization from './Components/ProductCategorization/productcategorization';
 import './Styles/App.css';
 import Footer from './Components/Footer';
-import CustomerDetails from './Components/CustomerDetails/customerDetails';
-import AddCustomer from './Components/addCustomer/AddCustomer';
+import VendorDetails from './Components/VendorDetails/VendorDetails';
+import AddVendor from './Components/AddVendor/AddVendor';
 
 const App = () => {
   return (
@@ -22,8 +22,8 @@ const App = () => {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/addproduct" element={<AddProducts />} />
             <Route path="/productdetails" element={<ProductDetails />} />
-            <Route path="/customerDetails" element={<CustomerDetails />} />
-            <Route path="/AddCustomer" element={<AddCustomer />} />
+            <Route path="/VendorDetails" element={<VendorDetails />} />
+            <Route path="/AddVendor" element={<AddVendor/>} />
             <Route path= "/ProductCategorization" element={<ProductCategorization/>} />
           </Routes>
         </div>

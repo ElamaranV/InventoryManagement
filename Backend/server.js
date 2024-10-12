@@ -3,6 +3,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const multer = require('multer');
 const path = require('path');
+const vendorRoutes = require('./routes/vendorRoutes');
 
 // Initialize Express
 const app = express();
@@ -10,7 +11,7 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static('uploads')); // Serve static files from uploads directory
+app.use(express.static('uploads'));
 
 // Multer storage configuration
 const storage = multer.diskStorage({
@@ -18,7 +19,7 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Append timestamp to avoid duplicate file names
+    cb(null, `${Date.now()}-${file.originalname}`);
   },
 });
 
@@ -31,7 +32,7 @@ mongoose.connect('mongodb://localhost:27017/inventory', {
   useUnifiedTopology: true,
 })
 .then(() => console.log('MongoDB connected'))
-.catch(err => console.log('MongoDB connection error:', err));
+.catch(err => console.error('MongoDB connection error:', err));
 
 // Product Schema
 const productSchema = new mongoose.Schema({
@@ -46,7 +47,7 @@ const productSchema = new mongoose.Schema({
   sku: { type: String, required: true },
   weight: { type: String },
   dimensions: { type: String },
-  images: { type: [String] }, // Store image filenames
+  images: { type: [String] },
 });
 
 // Product Model
@@ -56,34 +57,46 @@ const Product = mongoose.model('Product', productSchema);
 app.post('/api/product', upload.array('images'), async (req, res) => {
   try {
     const { productTitle, productDescription, category, vendor, collection, regularPrice, salePrice, variants, sku, weight, dimensions } = req.body;
-    const images = req.files.map(file => file.filename); // Get the uploaded file names
+    const images = req.files.map(file => file.filename);
 
-    // Log the request body and images to understand what data you're receiving
     console.log('Request Body:', req.body);
     console.log('Uploaded Images:', images);
 
-    // Create a product object and save it to the database
     const newProduct = new Product({
       productTitle,
       productDescription,
       category,
       vendor,
       collection,
-      regularPrice,
-      salePrice,
-      variants: JSON.parse(variants),
+      regularPrice: Number(regularPrice),
+      salePrice: salePrice ? Number(salePrice) : undefined,
+      variants: variants ? JSON.parse(variants) : undefined,
       sku,
       weight,
       dimensions,
-      images, // Save the images array to the database
+      images,
     });
 
     await newProduct.save();
     res.status(201).json({ message: 'Product created successfully!', product: newProduct });
   } catch (error) {
-    console.error('Error creating product:', error); // More descriptive error logging
-    res.status(500).json({ message: 'Error creating product', error });
+    console.error('Error creating product:', error);
+    res.status(500).json({ message: 'Error creating product', error: error.message });
   }
+});
+
+app.get('/test', (req, res) => {
+  res.send('Test route working');
+});
+
+// Use vendor routes
+app.get('/api/vendors', (req, res) => {
+  res.json([{ name: 'Test Vendor' }]);
+});
+
+app.use('*', (req, res) => {
+  console.log(`Received request for ${req.originalUrl}`);
+  res.status(404).send('Route not found');
 });
 
 // Start the server

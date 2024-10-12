@@ -62,15 +62,15 @@ const Sidebar = () => {
             {isVendorsOpen && (
               <ul className="sub-menu">
                 <li>
-                  <NavLink to="/addcustomer" className="nav-link sidebar-link">
+                  <NavLink to="/AddVendor" className="nav-link sidebar-link">
                     <IoAddCircleSharp className="sidebar-icon" />
                     Add Vendor
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/customerDetails" className="nav-link sidebar-link">
+                  <NavLink to="/VendorDetails" className="nav-link sidebar-link">
                     <FaUsers className="sidebar-icon" />
-                    Edit Vendor
+                    Vendor Details
                   </NavLink>
                 </li>
                 
