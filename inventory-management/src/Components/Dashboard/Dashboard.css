@@ -142,3 +142,20 @@ footer {
   width: 100%;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
 }
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #f2f2f2; /* Change the default striping color */
+}
+
+.table-hover tbody tr:hover {
+  background-color: #e9ecef; /* Custom hover color */
+}
+
+.table th, .table td {
+  vertical-align: middle; /* Vertically center content */
+}
+
+.thead-dark th {
+  background-color: #343a40;
+  border-bottom: 2px solid #dee2e6;
+}

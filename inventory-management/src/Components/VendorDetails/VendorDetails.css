@@ -63,3 +63,49 @@
     background-color: #f1f1f1;
   }
   
+  .vendor-details {
+    margin-top: 20px;
+  }
+  
+  .vendor-card {
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .vendor-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .vendor-icon {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .vendor-icon-img {
+    font-size: 3rem;
+    color: #007bff;
+  }
+  
+  .edit-mode input {
+    margin-bottom: 10px;
+  }
+  
+  .edit-buttons {
+    display: flex;
+    justify-content: flex-start;
+  }
+  
+  .error-message {
+    color: red;
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .loading-spinner {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-top: 50px;
+    color: #007bff;
+  }
+  

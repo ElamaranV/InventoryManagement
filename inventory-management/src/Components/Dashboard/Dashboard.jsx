@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
 import { FaShoppingCart, FaMoneyBillAlt, FaUserCircle } from 'react-icons/fa';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import Sidebar from '../Sidebar';
 import Footer from '../Footer';
+import axios from 'axios';
 
 const data = [
   { name: 'Jan', sales: 4000 },
@@ -16,6 +17,21 @@ const data = [
 ];
 
 const Dashboard = () => {
+  const [vendors, setVendors] = useState([]);
+
+  useEffect(() => {
+    const fetchVendors = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/vendors'); // Change to your API endpoint
+        setVendors(response.data.slice(0, 3)); // Fetch the top 3 recent vendors
+      } catch (error) {
+        console.error('Error fetching vendor data:', error);
+      }
+    };
+    
+    fetchVendors();
+  }, []);
+
   return (
     <div className="dashboard-layout">
       <Sidebar/>
@@ -39,8 +55,9 @@ const Dashboard = () => {
             <p>Out of stock</p>
           </div>
         </div>
+        
         <div className="dashboard-chart">
-          <h3>Total sells</h3>
+          <h3>Total Sales</h3>
           <p>Payment received across all channels</p>
           <LineChart width={976} height={400} data={data}>
             <XAxis dataKey="name" />
@@ -51,35 +68,31 @@ const Dashboard = () => {
             <Line type="monotone" dataKey="sales" stroke="#8884d8" />
           </LineChart>
         </div>
+
         <div className="dashboard-recent">
-          <h3>Recent Vendors</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Elamaran</td>
-                <td>ela@gmail.com</td>
-                <td>23232323</td>
-              </tr>
-              <tr>
-                <td>Athish</td>
-                <td>athish@example.com</td>
-                <td>987-654-3210</td>
-              </tr>
-              <tr>
-                <td>Krish</td>
-                <td>krish@example.com</td>
-                <td>555-123-4567</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+  <h3 className="mb-4">Recent Vendors</h3>
+  <div className="table-responsive">
+    <table className="table table-striped table-hover table-bordered">
+      <thead className="thead-dark">
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+        </tr>
+      </thead>
+      <tbody>
+        {vendors.map(vendor => (
+          <tr key={vendor._id}>
+            <td>{vendor.vendorName}</td>
+            <td>{vendor.email}</td>
+            <td>{vendor.phoneNumber}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+
       </div>
     </div>
   );

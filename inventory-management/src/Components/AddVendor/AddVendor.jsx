@@ -3,7 +3,7 @@ import axios from 'axios';
 import './addVendor.css'; 
 import Sidebar from '../Sidebar';
 import Footer from '../Footer';
-import alertify from 'alertifyjs'
+import alertify from 'alertifyjs';
 
 
 const AddVendor = () => {
@@ -17,19 +17,32 @@ const AddVendor = () => {
   });
 
   const [emailError, setEmailError] = useState('');
-  const [vendorCount, setVendorCount] = useState(100); // Assuming starting vendor count is 100
+  const[gstinError, setGStINError] = useState('');
+  const [lastVendorID, setLastVendorID] = useState(''); // To store the last Vendor ID
 
-  // Generate a Vendor ID when component mounts
+  // Fetch the latest vendor ID from the server
   useEffect(() => {
-    const generateVendorID = () => {
-      const newVendorID = `VEN${vendorCount + 1}`; // Increment based on current count
-      setVendor((prevVendor) => ({
-        ...prevVendor,
-        vendorID: newVendorID,
-      }));
+    const fetchLastVendorID = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/vendors/latest'); // Assuming /latest returns the last vendor
+        const lastVendor = response.data;
+
+        // Extract the numeric part and increment it
+        const lastIDNumber = parseInt(lastVendor.vendorID.replace('VEN', ''), 10);
+        const newVendorID = `VEN${lastIDNumber + 1}`;
+
+        setVendor((prevVendor) => ({
+          ...prevVendor,
+          vendorID: newVendorID,
+        }));
+      } catch (error) {
+        console.error('Error fetching last vendor ID: ', error);
+        alertify.error('Error fetching last vendor ID.');
+      }
     };
-    generateVendorID();
-  }, [vendorCount]);
+
+    fetchLastVendorID();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,6 +58,11 @@ const AddVendor = () => {
     return emailPattern.test(email);
   };
 
+  const validateGSTIN = (gstin) => {
+    const gstinPattern = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+    return gstinPattern.test(gstin)
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateEmail(vendor.email)) {
@@ -53,6 +71,12 @@ const AddVendor = () => {
     }
     setEmailError('');
 
+    if (!validateGSTIN(vendor.gstin)) {
+      setEmailError('Please enter a valid GST Identification Number');
+      return;
+    }
+    setGStINError('');
+
     try {
       const response = await axios.post('http://localhost:5000/api/vendors', vendor);
       console.log('Vendor added successfully: ', response.data);
@@ -60,12 +84,10 @@ const AddVendor = () => {
       // Show success alert
       alertify.success('Vendor added successfully!');
 
-      // Increment the vendor count
-      setVendorCount(prevCount => prevCount + 1); // Increment vendor count
-
-      // Optionally, reset the form
+      // Optionally, reset the form with a new vendor ID
+      const newVendorID = `VEN${parseInt(vendor.vendorID.replace('VEN', ''), 10) + 1}`;
       setVendor({
-        vendorID: `VEN${vendorCount + 1}`, // Resetting vendorID for the next entry
+        vendorID: newVendorID,
         vendorName: '',
         phoneNumber: '',
         email: '',
@@ -78,6 +100,7 @@ const AddVendor = () => {
       alertify.error('Error adding vendor. Please try again.');
     }
   };
+
   return (
     <>
       <Sidebar />

@@ -29,13 +29,39 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    console.log('Fetching vendors...'); // Add this log to see if the route is hit
     const vendors = await Vendor.find();
     res.json(vendors);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching vendors' });
   }
 });
+
+// Get the most recent vendor
+router.get('/latest', async (req, res) => {
+  try {
+    const latestVendor = await Vendor.findOne().sort({ _id: -1 }); // Sort by _id in descending order
+    res.json(latestVendor);
+  } catch (error) {
+    console.error('Error fetching latest vendor:', error);
+    res.status(500).json({ message: 'Error fetching latest vendor' });
+  }
+});
+
+// Update vendor route
+router.put('/:id', async (req, res) => {
+  const vendorId = req.params.id;
+  const updateData = req.body;
+
+  try {
+    const updatedVendor = await Vendor.findByIdAndUpdate(vendorId, updateData, { new: true });
+    res.json(updatedVendor);
+  } catch (error) {
+    console.error('Error updating vendor:', error);
+    res.status(500).json({ message: 'Error updating vendor', error });
+  }
+});
+
+
 
 
 

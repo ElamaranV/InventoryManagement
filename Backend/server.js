@@ -2,8 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const multer = require('multer');
-const path = require('path');
 const vendorRoutes = require('./routes/vendorRoutes');
+const productRoutes = require('./routes/productRoutes');
 
 // Initialize Express
 const app = express();
@@ -31,29 +31,10 @@ mongoose.connect('mongodb://localhost:27017/inventory', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.error('MongoDB connection error:', err));
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
-// Product Schema
-const productSchema = new mongoose.Schema({
-  productTitle: { type: String, required: true },
-  productDescription: { type: String, required: true },
-  category: { type: String, required: true },
-  vendor: { type: String, required: true },
-  collection: { type: String },
-  regularPrice: { type: Number, required: true },
-  salePrice: { type: Number },
-  variants: { type: Object },
-  sku: { type: String, required: true },
-  weight: { type: String },
-  dimensions: { type: String },
-  images: { type: [String] },
-});
-
-// Product Model
-const Product = mongoose.model('Product', productSchema);
-
-// Create product endpoint
+// Routes
 app.post('/api/product', upload.array('images'), async (req, res) => {
   try {
     const { productTitle, productDescription, category, vendor, collection, regularPrice, salePrice, variants, sku, weight, dimensions } = req.body;
@@ -61,6 +42,9 @@ app.post('/api/product', upload.array('images'), async (req, res) => {
 
     console.log('Request Body:', req.body);
     console.log('Uploaded Images:', images);
+
+    // Import the Product model from the separate Product file
+    const Product = require('./models/Product');
 
     const newProduct = new Product({
       productTitle,
@@ -89,10 +73,9 @@ app.get('/test', (req, res) => {
   res.send('Test route working');
 });
 
-// Use vendor routes
-app.get('/api/vendors', (req, res) => {
-  res.json([{ name: 'Test Vendor' }]);
-});
+// Product and Vendor Routes
+app.use('/api/products', productRoutes);
+app.use('/api/vendors', vendorRoutes);
 
 app.use('*', (req, res) => {
   console.log(`Received request for ${req.originalUrl}`);

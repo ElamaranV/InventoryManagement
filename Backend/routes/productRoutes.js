@@ -1,6 +1,7 @@
 const express = require('express'); 
 const router = express.Router(); 
 const Product = require('../models/Product'); 
+
  
 // POST: Create a new product 
 router.post('/', async (req, res) => { 
@@ -38,11 +39,22 @@ router.post('/', async (req, res) => {
  
     // Save the product to the database
     const savedProduct = await newProduct.save(); 
-    res.status(201).json(savedProduct); // Respond with the newly created product
+    res.status(201).json(savedProduct); 
   } catch (error) { 
-    console.error('Error saving product:', error); // Log the error for debugging
-    res.status(500).json({ message: 'Error saving product', error }); // Respond with an error message
+    console.error('Error saving product:', error); 
+    res.status(500).json({ message: 'Error saving product', error }); 
   } 
 }); 
+
+router.get('/', async (req, res) => {
+  try {
+    // console.log('Fetching Products'); 
+    const products = await Product.find();
+    res.json(products);
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res.status(500).json({ message: 'Error fetching products', error });
+  }
+});
  
 module.exports = router;
