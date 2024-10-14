@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './VendorDetails.css';
-import { FaUserAlt, FaPhoneAlt, FaEnvelope, FaEdit, FaSave, FaTimes } from 'react-icons/fa';
+import { FaUserAlt, FaPhoneAlt, FaEnvelope, FaEdit, FaSave, FaTimes, FaTrash } from 'react-icons/fa'; // Added FaTrash for delete icon
 import Sidebar from '../Sidebar';
 import alertify from 'alertifyjs';
 import axios from 'axios';
@@ -60,6 +60,18 @@ const VendorDetails = () => {
 
   const handleCancel = () => {
     setEditVendorId(null); // Exit edit mode
+  };
+
+  const handleDeleteClick = async (vendorId) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/vendors/${vendorId}`);
+      setVendors(vendors.filter((vendor) => vendor._id !== vendorId)); // Update state by removing the deleted vendor
+      setFilteredVendors(filteredVendors.filter((vendor) => vendor._id !== vendorId)); // Update filtered results
+      alertify.success('Vendor deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting vendor:', error);
+      alertify.error('Failed to delete vendor.');
+    }
   };
 
   // Handle search input changes
@@ -168,8 +180,11 @@ const VendorDetails = () => {
                       <p className="card-text">
                         <strong>GSTIN:</strong> {vendor.gstin}
                       </p>
-                      <button className="btn btn-outline-primary btn-sm" onClick={() => handleEditClick(vendor)}>
+                      <button className="btn btn-outline-primary btn-sm mr-2" onClick={() => handleEditClick(vendor)}>
                         <FaEdit /> Edit
+                      </button>
+                      <button className="btn btn-outline-danger btn-sm" onClick={() => handleDeleteClick(vendor._id)}>
+                        <FaTrash /> Delete
                       </button>
                     </div>
                   )}

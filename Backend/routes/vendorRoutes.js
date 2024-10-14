@@ -61,6 +61,24 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+router.delete('/:id', async (req, res) => {
+  try {
+    const vendorId = req.params.id;
+    
+    // Use findByIdAndDelete to find and delete in one step
+    const deletedVendor = await Vendor.findByIdAndDelete(vendorId);
+
+    if (!deletedVendor) {
+      return res.status(404).json({ message: 'Vendor not found' });
+    }
+
+    res.json({ message: 'Vendor deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting vendor:', error);
+    res.status(500).json({ message: 'Server error. Could not delete vendor.' });
+  }
+});
+
 
 
 
