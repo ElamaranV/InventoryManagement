@@ -10,6 +10,8 @@ import './Styles/App.css';
 import Footer from './Components/Footer';
 import VendorDetails from './Components/VendorDetails/VendorDetails';
 import AddVendor from './Components/AddVendor/AddVendor';
+import CustomerPage from './Components/CustomerPage/CustomerPage';
+import AddCustomer from './Components/CustomerPage/AddCustomer';
 
 const App = () => {
   return (
@@ -25,6 +27,8 @@ const App = () => {
             <Route path="/VendorDetails" element={<VendorDetails />} />
             <Route path="/AddVendor" element={<AddVendor/>} />
             <Route path= "/ProductCategorization" element={<ProductCategorization/>} />
+            <Route path='/customers' element={<CustomerPage/>} />
+            <Route path='/add-customer' element={<AddCustomer/>} />
           </Routes>
         </div>
       </Router>
