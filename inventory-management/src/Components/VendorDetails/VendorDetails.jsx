@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import './VendorDetails.css';
-import { FaUserAlt, FaPhoneAlt, FaEnvelope, FaEdit, FaSave, FaTimes, FaTrash } from 'react-icons/fa'; // Added FaTrash for delete icon
+import { FaUserAlt, FaPhoneAlt, FaEnvelope, FaEdit, FaSave, FaTimes, FaTrash } from 'react-icons/fa';
 import Sidebar from '../Sidebar';
 import alertify from 'alertifyjs';
 import axios from 'axios';
 
 const VendorDetails = () => {
   const [vendors, setVendors] = useState([]);
-  const [filteredVendors, setFilteredVendors] = useState([]); // To store the filtered results
+  const [filteredVendors, setFilteredVendors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editVendorId, setEditVendorId] = useState(null);
   const [editedVendor, setEditedVendor] = useState({});
-  const [searchTerm, setSearchTerm] = useState(''); // For search input
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchVendors = async () => {
@@ -20,7 +20,7 @@ const VendorDetails = () => {
         setLoading(true);
         const response = await axios.get('http://localhost:5000/api/vendors');
         setVendors(response.data);
-        setFilteredVendors(response.data); // Initially display all vendors
+        setFilteredVendors(response.data);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching vendor data:', error);
@@ -28,7 +28,6 @@ const VendorDetails = () => {
         setLoading(false);
       }
     };
-
     fetchVendors();
   }, []);
 
@@ -39,7 +38,24 @@ const VendorDetails = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setEditedVendor({ ...editedVendor, [name]: value });
+
+    // Handle nested bank details fields
+    if (name.startsWith('bankDetails.')) {
+      const bankField = name.split('.')[1];
+      setEditedVendor({
+        ...editedVendor,
+        bankDetails: {
+          ...editedVendor.bankDetails,
+          [bankField]: value,
+        },
+      });
+    } else {
+      // Handle other fields
+      setEditedVendor({
+        ...editedVendor,
+        [name]: value,
+      });
+    }
   };
 
   const handleSave = async () => {
@@ -51,7 +67,7 @@ const VendorDetails = () => {
         )
       );
       alertify.success('Vendor details updated successfully!');
-      setEditVendorId(null); // Exit edit mode
+      setEditVendorId(null);
     } catch (error) {
       console.error('Error saving vendor:', error);
       setError('Failed to save vendor details.');
@@ -59,14 +75,14 @@ const VendorDetails = () => {
   };
 
   const handleCancel = () => {
-    setEditVendorId(null); // Exit edit mode
+    setEditVendorId(null);
   };
 
   const handleDeleteClick = async (vendorId) => {
     try {
       await axios.delete(`http://localhost:5000/api/vendors/${vendorId}`);
-      setVendors(vendors.filter((vendor) => vendor._id !== vendorId)); // Update state by removing the deleted vendor
-      setFilteredVendors(filteredVendors.filter((vendor) => vendor._id !== vendorId)); // Update filtered results
+      setVendors(vendors.filter((vendor) => vendor._id !== vendorId));
+      setFilteredVendors(filteredVendors.filter((vendor) => vendor._id !== vendorId));
       alertify.success('Vendor deleted successfully!');
     } catch (error) {
       console.error('Error deleting vendor:', error);
@@ -74,12 +90,9 @@ const VendorDetails = () => {
     }
   };
 
-  // Handle search input changes
   const handleSearch = (e) => {
     const value = e.target.value.toLowerCase();
     setSearchTerm(value);
-
-    // Filter vendors based on search input
     const filtered = vendors.filter((vendor) =>
       vendor.vendorName.toLowerCase().includes(value) ||
       vendor.phoneNumber.toLowerCase().includes(value) ||
@@ -87,7 +100,6 @@ const VendorDetails = () => {
       vendor.companyName.toLowerCase().includes(value) ||
       vendor.gstin.toLowerCase().includes(value)
     );
-
     setFilteredVendors(filtered);
   };
 
@@ -127,6 +139,7 @@ const VendorDetails = () => {
                         name="vendorName"
                         value={editedVendor.vendorName}
                         onChange={handleInputChange}
+                        placeholder="Vendor Name"
                       />
                       <input
                         type="text"
@@ -134,6 +147,7 @@ const VendorDetails = () => {
                         name="phoneNumber"
                         value={editedVendor.phoneNumber}
                         onChange={handleInputChange}
+                        placeholder="Phone Number"
                       />
                       <input
                         type="email"
@@ -141,6 +155,7 @@ const VendorDetails = () => {
                         name="email"
                         value={editedVendor.email}
                         onChange={handleInputChange}
+                        placeholder="Email"
                       />
                       <input
                         type="text"
@@ -148,6 +163,7 @@ const VendorDetails = () => {
                         name="companyName"
                         value={editedVendor.companyName}
                         onChange={handleInputChange}
+                        placeholder="Company Name"
                       />
                       <input
                         type="text"
@@ -155,6 +171,57 @@ const VendorDetails = () => {
                         name="gstin"
                         value={editedVendor.gstin}
                         onChange={handleInputChange}
+                        placeholder="GSTIN"
+                      />
+                      {/* Additional fields for billing and shipping address */}
+                      <input
+                        type="text"
+                        className="form-control mb-2"
+                        name="billingAddress"
+                        value={editedVendor.billingAddress}
+                        onChange={handleInputChange}
+                        placeholder="Billing Address"
+                      />
+                      <input
+                        type="text"
+                        className="form-control mb-2"
+                        name="shippingAddress"
+                        value={editedVendor.shippingAddress}
+                        onChange={handleInputChange}
+                        placeholder="Shipping Address"
+                      />
+                      {/* Bank details fields */}
+                      <input
+                        type="text"
+                        className="form-control mb-2"
+                        name="bankDetails.accountHolderName"
+                        value={editedVendor.bankDetails?.accountHolderName || ''}
+                        onChange={handleInputChange}
+                        placeholder="Account Holder Name"
+                      />
+                      <input
+                        type="text"
+                        className="form-control mb-2"
+                        name="bankDetails.bankName"
+                        value={editedVendor.bankDetails?.bankName || ''}
+                        onChange={handleInputChange}
+                        placeholder="Bank Name"
+                      />
+                      <input
+                        type="text"
+                        className="form-control mb-2"
+                        name="bankDetails.accountNumber"
+                        value={editedVendor.bankDetails?.accountNumber || ''}
+                        onChange={handleInputChange}
+                        placeholder="Account Number"
+                      />
+                      <input
+                        type="text"
+                        className="form-control mb-2"
+                        name="bankDetails.ifsc"
+                        value={editedVendor.bankDetails?.ifsc || ''}
+                        onChange={handleInputChange}
+                        placeholder="IFSC Code"
                       />
                       <div className="edit-buttons">
                         <button className="btn btn-success btn-sm mr-2" onClick={handleSave}>
@@ -166,7 +233,7 @@ const VendorDetails = () => {
                       </div>
                     </div>
                   ) : (
-                    <div>
+                    <div className="vendor-details-container">
                       <h5 className="card-title">{vendor.vendorName}</h5>
                       <p className="card-text">
                         <FaPhoneAlt /> {vendor.phoneNumber}
@@ -177,15 +244,27 @@ const VendorDetails = () => {
                       <p className="card-text">
                         <strong>Company:</strong> {vendor.companyName}
                       </p>
-                      <p className="card-text">
-                        <strong>GSTIN:</strong> {vendor.gstin}
-                      </p>
-                      <button className="btn btn-outline-primary btn-sm mr-2" onClick={() => handleEditClick(vendor)}>
-                        <FaEdit /> Edit
-                      </button>
-                      <button className="btn btn-outline-danger btn-sm" onClick={() => handleDeleteClick(vendor._id)}>
-                        <FaTrash /> Delete
-                      </button>
+                      <div className="vendor-more-details">
+                        <p className="card-text">
+                          <strong>Bank Details:</strong>
+                          <br />
+                          {`Account Holder: ${vendor.bankDetails?.accountHolderName || ''}`}
+                          <br />
+                          {`Bank Name: ${vendor.bankDetails?.bankName || ''}`}
+                          <br />
+                          {`Account Number: ${vendor.bankDetails?.accountNumber || ''}`}
+                          <br />
+                          {`IFSC: ${vendor.bankDetails?.ifsc || ''}`}
+                        </p>
+                        <div className="vendor-buttons">
+                          <button className="btn btn-primary btn-sm " onClick={() => handleEditClick(vendor)}>
+                            <FaEdit /> Edit
+                          </button>
+                          <button className="btn btn-danger btn-sm" onClick={() => handleDeleteClick(vendor._id)}>
+                            <FaTrash /> Delete
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>

@@ -1,88 +1,72 @@
-/* Custom styles for the Add Vendor page */
+.container-fluid.add-vendor-form {
+  margin-left: 250px; /* To adjust for the sidebar */
+  max-width: 100%;
+  padding: 20px;
+}
+
 .add-vendor-form {
-  margin-top: 50px;
-  padding-bottom: 50px;
+  width: calc(100% - 250px); /* Adjust to fit next to Sidebar */
+  margin-left: 250px; /* Sidebar width, moves form to the left */
+  padding: 20px;
+  overflow-x: hidden; /* Disable horizontal scrolling */
+  box-sizing: border-box;
 }
 
-.card {
-  border-radius: 10px;
-  background-color: #f9f9f9;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.add-vendor-form form {
+  max-width: 600px;
+  margin: 0; /* Centers the form */
 }
 
-.card h2 {
-  font-size: 28px;
-  color: #007bff;
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-
-.card p.text-muted {
-  font-size: 16px;
+.add-vendor-form .form-group {
   margin-bottom: 20px;
 }
 
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  font-weight: 500;
-  color: #333;
+.add-vendor-form label {
+  font-weight: bold;
   margin-bottom: 5px;
-  display: block;
 }
 
-.form-control {
+.add-vendor-form input,
+.add-vendor-form textarea {
+  width: 100%;
   padding: 10px;
   border-radius: 5px;
-  border: 1px solid #ced4da;
+  border: 1px solid #ccc;
+}
+
+.add-vendor-form .btn-block {
   width: 100%;
-  font-size: 16px;
+  padding: 10px;
 }
 
-.form-control:focus {
-  border-color: #80bdff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+.add-vendor-form .button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
 }
 
-.btn-primary {
-  background-color: #007bff;
-  border-color: #007bff;
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 5px;
-  width: 100%;
-  margin-top: 10px;
+.button-container .btn {
+  flex: 1;
+  margin: 0 10px;
 }
 
-.btn-primary:hover {
-  background-color: #0056b3;
-  border-color: #0056b3;
-}
-
-.text-danger {
-  color: #dc3545;
-  font-size: 14px;
-  margin-top: 5px;
-}
-
-/* Responsive adjustments */
 @media (max-width: 768px) {
-  .card {
-    padding: 20px;
+  .container-fluid.add-vendor-form {
+    margin-left: 0;
+    padding: 10px;
   }
 
-  .card h2 {
-    font-size: 24px;
+  .add-vendor-form form {
+    max-width: 100%;
   }
 
-  .form-control {
-    font-size: 14px;
+  .button-container {
+    flex-direction: column;
+    align-items: center;
   }
 
-  .btn-primary {
-    font-size: 14px;
+  .button-container .btn {
+    width: 100%;
+    margin: 10px 0;
   }
 }

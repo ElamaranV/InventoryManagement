@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './AddProducts.css';
 import Footer from '../Footer';
 import Sidebar from '../Sidebar';
@@ -20,7 +20,22 @@ const AddProduct = () => {
   const [weight, setWeight] = useState('');
   const [dimensions, setDimensions] = useState('');
   const [images, setImages] = useState([]);
+  const [vendorsList, setVendorsList] = useState([]); // New state to store vendor list
   const fileInputRef = useRef(null);
+
+  // Fetch vendors from the backend
+  useEffect(() => {
+    const fetchVendors = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/vendors'); // Replace with your API URL
+        setVendorsList(response.data); // Assuming API returns a list of vendors
+      } catch (error) {
+        console.error('Error fetching vendors:', error);
+      }
+    };
+
+    fetchVendors();
+  }, []);
 
   const handleImageUpload = (event) => {
     const files = Array.from(event.target.files);
@@ -156,29 +171,24 @@ const AddProduct = () => {
                   <option>Toy and Baby products</option>
                   <option>Books and Media</option>
                   <option>Groceries</option>
-
-
-
-
-
                 </select>
               </div>
+
               <div className="vendor">
                 <label>Vendor <span style={{ color: 'red' }}>*</span></label>
                 <select 
                   value={vendor}
                   onChange={(e) => setVendor(e.target.value)}
                 >
-                    <option>Electronics</option>
-                  <option>Fashion</option>
-                  <option>Home & Furniture</option>
-                  <option>Sports and Outdoors</option>
-                  <option>Health and wellness</option>
-                  <option>Toy and Baby products</option>
-                  <option>Books and Media</option>
-                  <option>Groceries</option>
+                  <option value="">Select Vendor</option>
+                  {vendorsList.map((vendor) => (
+                    <option key={vendor._id} value={vendor.vendorName}>
+                      {vendor.vendorName}
+                    </option>
+                  ))}
                 </select>
               </div>
+
               <div className="collection">
                 <label>Collection</label>
                 <input 

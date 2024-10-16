@@ -1,4 +1,3 @@
-// routes/vendorRoutes.js
 const express = require('express');
 const router = express.Router();
 const Vendor = require('../models/Vendor'); // Adjust the path as necessary
@@ -6,7 +5,17 @@ const Vendor = require('../models/Vendor'); // Adjust the path as necessary
 // Create a new vendor
 router.post('/', async (req, res) => {
   try {
-    const { vendorID, vendorName, phoneNumber, email, companyName, gstin } = req.body;
+    const {
+      vendorID,
+      vendorName,
+      phoneNumber,
+      email,
+      companyName,
+      gstin,
+      billingAddress,
+      shippingAddress,
+      bankDetails,
+    } = req.body;
 
     // Create a new vendor instance
     const newVendor = new Vendor({
@@ -16,6 +25,9 @@ router.post('/', async (req, res) => {
       email,
       companyName,
       gstin,
+      billingAddress,
+      shippingAddress,
+      bankDetails,
     });
 
     // Save the vendor to the database
@@ -27,6 +39,7 @@ router.post('/', async (req, res) => {
   }
 });
 
+// Get all vendors
 router.get('/', async (req, res) => {
   try {
     const vendors = await Vendor.find();
@@ -61,6 +74,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+// Delete vendor route
 router.delete('/:id', async (req, res) => {
   try {
     const vendorId = req.params.id;
@@ -78,10 +92,6 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({ message: 'Server error. Could not delete vendor.' });
   }
 });
-
-
-
-
 
 // Export the router
 module.exports = router;

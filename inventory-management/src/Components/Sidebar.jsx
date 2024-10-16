@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { FaListAlt, FaUsers, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaListAlt, FaUsers, FaChevronDown, FaChevronUp, FaShoppingCart, FaUserFriends, FaReceipt } from 'react-icons/fa';
 import { IoAddCircleSharp } from "react-icons/io5";
 import { MdDashboard, MdCategory } from "react-icons/md";
 import './Sidebar.css';
@@ -8,9 +8,11 @@ import './Sidebar.css';
 const Sidebar = () => {
   const [isProductsOpen, setIsProductsOpen] = useState(false);
   const [isVendorsOpen, setIsVendorsOpen] = useState(false);
+  const [isSalesOpen, setIsSalesOpen] = useState(false); // New state for Sales dropdown
 
   const toggleProducts = () => setIsProductsOpen(!isProductsOpen);
   const toggleVendors = () => setIsVendorsOpen(!isVendorsOpen);
+  const toggleSales = () => setIsSalesOpen(!isSalesOpen); // Toggle Sales dropdown
 
   return (
     <nav className="navbar navbar-expand-lg sidebar">
@@ -24,6 +26,8 @@ const Sidebar = () => {
               Dashboard
             </NavLink>
           </li>
+          
+          {/* Products Section */}
           <li className="nav-item">
             <div className="nav-link sidebar-link" onClick={toggleProducts}>
               <FaListAlt className="sidebar-icon" />
@@ -53,6 +57,8 @@ const Sidebar = () => {
               </ul>
             )}
           </li>
+          
+          {/* Vendors Section */}
           <li className="nav-item">
             <div className="nav-link sidebar-link" onClick={toggleVendors}>
               <FaUsers className="sidebar-icon" />
@@ -73,7 +79,31 @@ const Sidebar = () => {
                     Vendor Details
                   </NavLink>
                 </li>
-                
+              </ul>
+            )}
+          </li>
+
+          {/* Sales Section (New) */}
+          <li className="nav-item">
+            <div className="nav-link sidebar-link" onClick={toggleSales}>
+              <FaShoppingCart className="sidebar-icon" />
+              Sales
+              {isSalesOpen ? <FaChevronUp className="ml-2" /> : <FaChevronDown className="ml-2" />}
+            </div>
+            {isSalesOpen && (
+              <ul className="sub-menu">
+                <li>
+                  <NavLink to="/customers" className="nav-link sidebar-link">
+                    <FaUserFriends className="sidebar-icon" />
+                    Customers
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="/salesorder" className="nav-link sidebar-link">
+                    <FaReceipt className="sidebar-icon" />
+                    Sales Order
+                  </NavLink>
+                </li>
               </ul>
             )}
           </li>
