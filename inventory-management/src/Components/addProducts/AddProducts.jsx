@@ -20,15 +20,15 @@ const AddProduct = () => {
   const [weight, setWeight] = useState('');
   const [dimensions, setDimensions] = useState('');
   const [images, setImages] = useState([]);
-  const [vendorsList, setVendorsList] = useState([]); // New state to store vendor list
+  const [units, setUnits] = useState('');
+  const [vendorsList, setVendorsList] = useState([]);
   const fileInputRef = useRef(null);
 
-  // Fetch vendors from the backend
   useEffect(() => {
     const fetchVendors = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/vendors'); // Replace with your API URL
-        setVendorsList(response.data); // Assuming API returns a list of vendors
+        const response = await axios.get('http://localhost:5000/api/vendors');
+        setVendorsList(response.data);
       } catch (error) {
         console.error('Error fetching vendors:', error);
       }
@@ -49,7 +49,7 @@ const AddProduct = () => {
   const handlePublish = async () => {
     alertify.set('notifier', 'position', 'top-center');
 
-    if (!productTitle || !productDescription || !category || !vendor || !sku || !regularPrice) {
+    if (!productTitle || !productDescription || !category || !vendor || !sku || !regularPrice || !units) {
       alertify.error("Please fill out all required fields.");
       return;
     }
@@ -66,6 +66,7 @@ const AddProduct = () => {
     formData.append('weight', weight);
     formData.append('dimensions', dimensions);
     formData.append('variants', JSON.stringify({ option1: variantOption1, option2: variantOption2 }));
+    formData.append('units', units);
 
     images.forEach((image, index) => {
       formData.append(`images`, image);
@@ -90,6 +91,7 @@ const AddProduct = () => {
       setWeight('');
       setDimensions('');
       setImages([]);
+      setUnits('');
     } catch (error) {
       alertify.error('There was an error publishing the product!');
       console.error('There was an error publishing the product!', error);
@@ -137,7 +139,7 @@ const AddProduct = () => {
                   ref={fileInputRef}
                   style={{ display: 'none' }}
                 />
-                <button onClick={openFileDialog} className="save-draft-btn">
+                <button onClick={openFileDialog} className="browse-btn">
                   Browse from device
                 </button>
               </div>
@@ -163,14 +165,15 @@ const AddProduct = () => {
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                 >
-                  <option>Electronics</option>
-                  <option>Fashion</option>
-                  <option>Home & Furniture</option>
-                  <option>Sports and Outdoors</option>
-                  <option>Health and wellness</option>
-                  <option>Toy and Baby products</option>
-                  <option>Books and Media</option>
-                  <option>Groceries</option>
+                  <option value="">Select Category</option>
+                  <option value="Electronics">Electronics</option>
+                  <option value="Fashion">Fashion</option>
+                  <option value="Home & Furniture">Home & Furniture</option>
+                  <option value="Sports and Outdoors">Sports and Outdoors</option>
+                  <option value="Health and wellness">Health and wellness</option>
+                  <option value="Toy and Baby products">Toy and Baby products</option>
+                  <option value="Books and Media">Books and Media</option>
+                  <option value="Groceries">Groceries</option>
                 </select>
               </div>
 
@@ -226,6 +229,15 @@ const AddProduct = () => {
                   onChange={(e) => setDimensions(e.target.value)}
                 />
               </div>
+              <div className="units">
+                <label>Units <span style={{ color: 'red' }}>*</span></label>
+                <input 
+                  type="number" 
+                  placeholder="Number of units available" 
+                  value={units}
+                  onChange={(e) => setUnits(e.target.value)}
+                />
+              </div>
             </div>
 
             <div className="pricing-section">
@@ -249,34 +261,31 @@ const AddProduct = () => {
             </div>
 
             <div className="variants">
-              <h3>Variants</h3>
-              <div className="variant-options">
-                <div className="option">
-                  <label>Option 1</label>
-                  <select 
-                    value={variantOption1}
-                    onChange={(e) => setVariantOption1(e.target.value)}
-                  >
-                    <option>Size</option>
-                    <option>Color</option>
-                  </select>
-                </div>
-                <div className="option">
-                  <label>Option 2</label>
-                  <select 
-                    value={variantOption2}
-                    onChange={(e) => setVariantOption2(e.target.value)}
-                  >
-                    <option>Size</option>
-                    <option>Color</option>
-                  </select>
-                </div>
-              </div>
-            </div>
+  <h3>Variants</h3>
+  <div className="variant-options">
+    <div className="option">
+      <label>Option 1</label>
+      <input
+        type="text"
+        placeholder="Enter option 1 (e.g., Size or Color)"
+        value={variantOption1}
+        onChange={(e) => setVariantOption1(e.target.value)}
+      />
+    </div>
+    <div className="option">
+      <label>Option 2</label>
+      <input
+        type="text"
+        placeholder="Enter option 2 (e.g., Size or Color)"
+        value={variantOption2}
+        onChange={(e) => setVariantOption2(e.target.value)}
+      />
+    </div>
+  </div>
+</div>
+
 
             <div className="save-publish">
-              <button className="discard-btn">Discard</button>
-              <button className="save-draft-btn">Save Draft</button>
               <button className="publish-btn" onClick={handlePublish}>
                 Publish Product
               </button>

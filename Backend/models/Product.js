@@ -14,6 +14,7 @@ const productSchema = new mongoose.Schema({
   weight: { type: String },
   dimensions: { type: String },
   images: { type: [String] },
+  units: { type: Number, required: true, default: 0 } // New field
 });
 
 // Check if the model already exists before compiling
