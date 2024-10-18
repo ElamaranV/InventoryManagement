@@ -22,6 +22,9 @@ const AddProduct = () => {
   const [images, setImages] = useState([]);
   const [units, setUnits] = useState('');
   const [vendorsList, setVendorsList] = useState([]);
+  const [openingStock, setOpeningStock] = useState('');
+  const [openingStockPrice, setOpeningStockPrice] = useState('');
+  const [reorderPoint, setReorderPoint] = useState('');
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -67,6 +70,9 @@ const AddProduct = () => {
     formData.append('dimensions', dimensions);
     formData.append('variants', JSON.stringify({ option1: variantOption1, option2: variantOption2 }));
     formData.append('units', units);
+    formData.append('openingStock', openingStock);
+    formData.append('openingStockPrice', openingStockPrice);
+    formData.append('reorderPoint', reorderPoint);
 
     images.forEach((image, index) => {
       formData.append(`images`, image);
@@ -92,6 +98,9 @@ const AddProduct = () => {
       setDimensions('');
       setImages([]);
       setUnits('');
+      setOpeningStock('');
+      setOpeningStockPrice('');
+      setReorderPoint('');
     } catch (error) {
       alertify.error('There was an error publishing the product!');
       console.error('There was an error publishing the product!', error);
@@ -261,29 +270,61 @@ const AddProduct = () => {
             </div>
 
             <div className="variants">
-  <h3>Variants</h3>
-  <div className="variant-options">
-    <div className="option">
-      <label>Option 1</label>
-      <input
-        type="text"
-        placeholder="Enter option 1 (e.g., Size or Color)"
-        value={variantOption1}
-        onChange={(e) => setVariantOption1(e.target.value)}
-      />
-    </div>
-    <div className="option">
-      <label>Option 2</label>
-      <input
-        type="text"
-        placeholder="Enter option 2 (e.g., Size or Color)"
-        value={variantOption2}
-        onChange={(e) => setVariantOption2(e.target.value)}
-      />
-    </div>
-  </div>
-</div>
+              <h3>Variants</h3>
+              <div className="variant-options">
+                <div className="option">
+                  <label>Option 1</label>
+                  <input
+                    type="text"
+                    placeholder="Enter option 1 (e.g., Size or Color)"
+                    value={variantOption1}
+                    onChange={(e) => setVariantOption1(e.target.value)}
+                  />
+                </div>
+                <div className="option">
+                  <label>Option 2</label>
+                  <input
+                    type="text"
+                    placeholder="Enter option 2 (e.g., Size or Color)"
+                    value={variantOption2}
+                    onChange={(e) => setVariantOption2(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
 
+            <div className="track-inventory-section">
+              <h3>Track Inventory</h3>
+              <div className="inventory-fields">
+                <div className="inventory-field">
+                  <label>Opening Stock</label>
+                  <input 
+                    type="number" 
+                    placeholder="Enter opening stock quantity"
+                    value={openingStock}
+                    onChange={(e) => setOpeningStock(e.target.value)}
+                  />
+                </div>
+                <div className="inventory-field">
+                  <label>Opening Stock Price</label>
+                  <input 
+                    type="number" 
+                    placeholder="Enter opening stock price"
+                    value={openingStockPrice}
+                    onChange={(e) => setOpeningStockPrice(e.target.value)}
+                  />
+                </div>
+                <div className="inventory-field">
+                  <label>Reorder Point</label>
+                  <input 
+                    type="number" 
+                    placeholder="Enter reorder point"
+                    value={reorderPoint}
+                    onChange={(e) => setReorderPoint(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
 
             <div className="save-publish">
               <button className="publish-btn" onClick={handlePublish}>

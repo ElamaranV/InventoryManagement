@@ -17,8 +17,28 @@ router.post('/', async (req, res) => {
         salePrice,
         variants,
         images,
-        units // New field
+        units,
+        openingStock,
+        openingStockPrice,
+        reorderPoint
     } = req.body;
+
+    // Log the incoming request body for debugging
+    console.log('Request Body:', req.body);
+
+    // Convert numeric fields from string to number
+    const parsedRegularPrice = parseFloat(regularPrice);
+    const parsedSalePrice = salePrice ? parseFloat(salePrice) : undefined;
+    const parsedUnits = parseInt(units, 10);
+    const parsedOpeningStock = parseInt(openingStock, 10);
+    const parsedOpeningStockPrice = parseFloat(openingStockPrice);
+    const parsedReorderPoint = parseInt(reorderPoint, 10);
+
+    // Validate numeric fields
+    if (isNaN(parsedRegularPrice) || isNaN(parsedUnits) || isNaN(parsedOpeningStock) ||
+        isNaN(parsedOpeningStockPrice) || isNaN(parsedReorderPoint)) {
+        return res.status(400).json({ message: 'Invalid numeric fields' });
+    }
 
     try {
         const newProduct = new Product({
@@ -30,11 +50,14 @@ router.post('/', async (req, res) => {
             sku,
             weight,
             dimensions,
-            regularPrice,
-            salePrice,
+            regularPrice: parsedRegularPrice,
+            salePrice: parsedSalePrice,
             variants,
             images,
-            units // New field
+            units: parsedUnits,
+            openingStock: parsedOpeningStock,
+            openingStockPrice: parsedOpeningStockPrice,
+            reorderPoint: parsedReorderPoint
         });
 
         const savedProduct = await newProduct.save();

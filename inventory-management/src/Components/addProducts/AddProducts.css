@@ -171,3 +171,23 @@
   object-fit: cover;
   border-radius: 4px;
 }
+
+.track-inventory-section {
+  grid-column: span 2;
+  margin-bottom: 20px;
+}
+
+.inventory-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.inventory-field input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
