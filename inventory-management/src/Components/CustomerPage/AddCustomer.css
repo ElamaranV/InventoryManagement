@@ -1,0 +1,71 @@
+/* Import Urbanist font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap');
+
+/* Global font family for Urbanist */
+body {
+  font-family: 'Urbanist', sans-serif;
+  background-color: #f8f9fa; /* Light background for form clarity */
+}
+
+/* Card styling for professional look */
+.custom-card {
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.custom-card-header {
+  background-color: #007bff;
+  color: #fff;
+  border-bottom: none;
+  font-weight: 600;
+  padding: 1rem 1.25rem;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+/* Form elements */
+.form-control {
+  border-radius: 8px;
+  padding: 10px;
+  border: 1px solid #ced4da;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+textarea.form-control {
+  min-height: 120px;
+}
+
+/* Button styles */
+button {
+  font-weight: 600;
+  font-size: 16px;
+  padding: 10px 20px;
+  margin-top: 5px;
+  margin-left: 2px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+button[type="button"] {
+  background-color: #6c757d;
+  color: white;
+}
+
+button[type="button"]:hover {
+  background-color: #5a6268;
+}

@@ -1,13 +1,50 @@
-// src/components/CustomerPage.jsx
-import React from "react";
-import { ChevronDown, Menu, Plus, Search, Settings, User } from "lucide-react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import Sidebar from "../Sidebar"; // Importing Sidebar
-import Footer from "../Footer"; // Importing Footer
+import React, { useEffect, useState } from "react";
+import { ChevronDown, Menu, Plus, Search, Settings, User, Edit, Trash } from "lucide-react";
+import { useNavigate } from "react-router-dom"; 
+import Sidebar from "../Sidebar";
+import Footer from "../Footer";
+import axios from 'axios';
 
 export default function CustomerPage() {
-  const [sidebarOpen, setSidebarOpen] = React.useState(false);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [customers, setCustomers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(""); // State for search term
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/customers');
+        setCustomers(response.data);
+      } catch (error) {
+        console.error("Error fetching customers:", error);
+      }
+    };
+
+    fetchCustomers();
+  }, []);
+
+  // Delete customer
+  const deleteCustomer = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/customers/${id}`);
+      setCustomers(customers.filter(customer => customer._id !== id)); // Remove from UI
+    } catch (error) {
+      console.error("Error deleting customer:", error);
+    }
+  };
+
+  // Edit customer
+  const editCustomer = (id) => {
+    navigate(`/edit-customer/${id}`); // Navigate to the edit customer form
+  };
+
+  // Handle search operation
+  const filteredCustomers = customers.filter(customer =>
+    customer.displayName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    customer.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    customer.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="d-flex flex-column vh-100">
@@ -27,6 +64,8 @@ export default function CustomerPage() {
               className="form-control ps-5"
               type="search"
               placeholder="Search contacts..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)} // Update search term
             />
           </div>
         </div>
@@ -47,7 +86,7 @@ export default function CustomerPage() {
         {/* Main content */}
         <main className="flex-grow-1 overflow-auto p-4" style={{ marginLeft: '250px' }}>
           <div className="d-flex justify-content-between mb-4">
-            <h2 className="h5">All Contacts</h2>
+            <h2 className="h5">All Customers</h2>
             <div>
               <button className="btn btn-primary me-2" onClick={() => navigate('/add-customer')}>
                 <Plus className="me-2" />
@@ -73,22 +112,45 @@ export default function CustomerPage() {
                   <th>Work Phone</th>
                   <th>Receivables</th>
                   <th>Payables</th>
+                  <th>Actions</th> {/* Added Actions Column */}
                 </tr>
               </thead>
               <tbody>
-                {[...Array(5)].map((_, i) => (
-                  <tr key={i}>
-                    <td>
-                      <input type="checkbox" />
+                {filteredCustomers.length > 0 ? (
+                  filteredCustomers.map((customer, i) => (
+                    <tr key={i}>
+                      <td>
+                        <input type="checkbox" />
+                      </td>
+                      <td>{customer.displayName}</td>
+                      <td>{customer.companyName}</td>
+                      <td>{customer.email}</td>
+                      <td>{customer.workPhone}</td>
+                      <td>{customer.receivables}</td>
+                      <td>{customer.payables}</td>
+                      <td>
+                        <button
+                          className="btn btn-sm btn-outline-primary me-2"
+                          onClick={() => editCustomer(customer._id)} // Edit action
+                        >
+                          <Edit size={16} />
+                        </button>
+                        <button
+                          className="btn btn-sm btn-outline-danger"
+                          onClick={() => deleteCustomer(customer._id)} // Delete action
+                        >
+                          <Trash size={16} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" className="text-center">
+                      No customers found
                     </td>
-                    <td>John Doe</td>
-                    <td>Acme Inc</td>
-                    <td>john@acme.com</td>
-                    <td>(123) 456-7890</td>
-                    <td>$1,000.00</td>
-                    <td>$500.00</td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>

@@ -29,6 +29,8 @@ const App = () => {
             <Route path= "/ProductCategorization" element={<ProductCategorization/>} />
             <Route path='/customers' element={<CustomerPage/>} />
             <Route path='/add-customer' element={<AddCustomer/>} />
+            <Route path="/edit-customer/:id" element={<AddCustomer />} />
+
           </Routes>
         </div>
       </Router>

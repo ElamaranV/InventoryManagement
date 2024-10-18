@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const multer = require('multer');
 const vendorRoutes = require('./routes/vendorRoutes');
 const productRoutes = require('./routes/productRoutes');
+const customerRoutes = require('./routes/customerRoutes');  
 
 // Initialize Express
 const app = express();
@@ -80,6 +81,9 @@ app.get('/test', (req, res) => {
 // Product and Vendor Routes
 app.use('/api/products', productRoutes);
 app.use('/api/vendors', vendorRoutes);
+
+//Add Customer Routes
+app.use('/api/customers', customerRoutes);
 
 app.use('*', (req, res) => {
   console.log(`Received request for ${req.originalUrl}`);
