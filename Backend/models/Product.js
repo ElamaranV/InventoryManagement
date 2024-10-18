@@ -14,7 +14,7 @@ const productSchema = new mongoose.Schema({
     weight: { type: String },
     dimensions: { type: String },
     images: { type: [String] },
-    units: { type: Number, required: true, default: 0 },
+    units: { type: Number, required: true },
     openingStock: { type: Number, required: true, default: 0 }, // Added field
     openingStockPrice: { type: Number, required: true, default: 0 }, // Added field
     reorderPoint: { type: Number, required: true, default: 0 } // Added field

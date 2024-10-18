@@ -37,7 +37,7 @@ mongoose.connect('mongodb://localhost:27017/inventory', {
 // Routes
 app.post('/api/product', upload.array('images'), async (req, res) => {
   try {
-    const { productTitle, productDescription, category, vendor, collection, regularPrice, salePrice, variants, sku, weight, dimensions } = req.body;
+    const { productTitle, productDescription, category, vendor, collection, regularPrice, salePrice, variants, sku, weight, dimensions, units, openingStock, openingStockPrice, reorderPoint } = req.body;
     const images = req.files.map(file => file.filename);
 
     console.log('Request Body:', req.body);
@@ -59,6 +59,10 @@ app.post('/api/product', upload.array('images'), async (req, res) => {
       weight,
       dimensions,
       images,
+      units, 
+      openingStock, 
+      openingStockPrice, 
+      reorderPoint
     });
 
     await newProduct.save();
