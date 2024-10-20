@@ -193,7 +193,7 @@ app.get('/test', (req, res) => {
 app.use('/api/products', productRoutes);
 app.use('/api/vendors', vendorRoutes);
 app.use('/api/customers', customerRoutes);
-app.use('/api/salesorders', salesOrderRoutes);
+app.use('/api/salesorder', salesOrderRoutes);
 
 app.use('*', (req, res) => {
   console.log(`Received request for ${req.originalUrl}`);

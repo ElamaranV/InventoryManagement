@@ -5,20 +5,20 @@ import axios from 'axios';
 
 const SalesOrder = () => {
   const [formData, setFormData] = useState({
+    salesOrderNumber: '',
     customer: '',
     reference: '',
     salesOrderDate: '',
-    expectedShipment: '',
+    expectedShipmentDate: '',
     paymentTerms: 'Due on Receipt',
     deliveryMethod: '',
     salesperson: '',
     priceList: '',
-    itemDetails: [{ itemName: '', quantity: 1, rate: 0, discount: 0, amount: 0 }],
+    items: [],
     shippingCharges: 0,
     adjustment: 0,
-    terms: '',
-    files: [],
-    salesOrder: '',  // Store the sales order number, now editable
+    termsAndConditions: '',
+    attachments: [],
   });
 
   const [customers, setCustomers] = useState([]);
@@ -49,66 +49,71 @@ const SalesOrder = () => {
 
   const handleItemChange = (index, e) => {
     const { name, value } = e.target;
-    const newItemDetails = [...formData.itemDetails];
-    newItemDetails[index][name] = value;
+    const newItems = [...formData.items];
+    newItems[index] = { ...newItems[index], [name]: value };
 
-    const quantity = parseFloat(newItemDetails[index].quantity) || 0;
-    const rate = parseFloat(newItemDetails[index].rate) || 0;
-    const discount = parseFloat(newItemDetails[index].discount) || 0;
+    const quantity = parseFloat(newItems[index].quantity) || 0;
+    const rate = parseFloat(newItems[index].rate) || 0;
+    const discount = parseFloat(newItems[index].discount) || 0;
     const amount = (quantity * rate) - (quantity * rate * (discount / 100));
-    newItemDetails[index].amount = amount.toFixed(2);
-    setFormData({ ...formData, itemDetails: newItemDetails });
+    newItems[index].amount = amount.toFixed(2);
+    setFormData({ ...formData, items: newItems });
   };
 
   const addItemRow = () => {
     setFormData({
       ...formData,
-      itemDetails: [...formData.itemDetails, { itemName: '', quantity: 1, rate: 0, discount: 0, amount: 0 }],
+      items: [...formData.items, { itemName: '', quantity: 1, rate: 0, discount: 0, amount: 0 }],
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Create FormData object for file uploads
     const dataToSubmit = new FormData();
+
+    // Append all form fields to FormData
     Object.keys(formData).forEach(key => {
-      if (key === 'files') {
-        Array.from(formData.files).forEach(file => {
-          dataToSubmit.append(key, file);
+      if (key === 'items') {
+        dataToSubmit.append(key, JSON.stringify(formData[key]));
+      } else if (key === 'attachments') {
+        formData[key].forEach(file => {
+          dataToSubmit.append('attachments', file);
         });
+      } else if (key === 'shippingCharges' || key === 'adjustment') {
+        dataToSubmit.append(key, parseFloat(formData[key]));
       } else {
         dataToSubmit.append(key, formData[key]);
       }
     });
 
     try {
-      const response = await axios.post('http://localhost:5000/api/salesorders', dataToSubmit, {
+      const response = await axios.post('http://localhost:5000/api/salesorder', dataToSubmit, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      // Use the provided sales order number instead of response data
-      alert(`Sales Order ${formData.salesOrder} created successfully!`);
-      // Reset form without salesOrder
+      console.log('Response:', response.data); // Log the response for debugging
+      alert(`Sales Order ${response.data.salesOrderNumber} created successfully!`);
+      // Reset form
       setFormData({
+        salesOrderNumber: '',
         customer: '',
         reference: '',
         salesOrderDate: '',
-        expectedShipment: '',
+        expectedShipmentDate: '',
         paymentTerms: 'Due on Receipt',
         deliveryMethod: '',
         salesperson: '',
         priceList: '',
-        itemDetails: [{ itemName: '', quantity: 1, rate: 0, discount: 0, amount: 0 }],
+        items: [],
         shippingCharges: 0,
         adjustment: 0,
-        terms: '',
-        files: [],
-        salesOrder: '', // Reset sales order number
+        termsAndConditions: '',
+        attachments: [],
       });
     } catch (error) {
-      console.error('There was an error creating the sales order!', error);
+      console.error('There was an error creating the sales order!', error.response?.data || error.message);
       alert('Failed to create sales order. Please try again.');
     }
   };
@@ -119,6 +124,17 @@ const SalesOrder = () => {
       <h1>New Sales Order</h1>
       {error && <div className="error-message">{error}</div>}
       <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="salesOrderNumber">Sales Order#*</label>
+          <input 
+            type="text" 
+            id="salesOrderNumber" 
+            value={formData.salesOrderNumber} 
+            onChange={handleInputChange}
+            required 
+          />
+        </div>
+
         <div className="form-group">
           <label htmlFor="customer">Customer Name*</label>
           <div className="select-wrapper">
@@ -139,16 +155,6 @@ const SalesOrder = () => {
 
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="salesOrder">Sales Order#*</label>
-            <input 
-              type="text" 
-              id="salesOrder" 
-              value={formData.salesOrder} 
-              onChange={handleInputChange} // Allow user to input sales order number
-              required 
-            />
-          </div>
-          <div className="form-group">
             <label htmlFor="reference">Reference#</label>
             <input type="text" id="reference" value={formData.reference} onChange={handleInputChange} />
           </div>
@@ -160,8 +166,8 @@ const SalesOrder = () => {
             <input type="date" id="salesOrderDate" value={formData.salesOrderDate} onChange={handleInputChange} required />
           </div>
           <div className="form-group">
-            <label htmlFor="expectedShipment">Expected Shipment Date</label>
-            <input type="date" id="expectedShipment" value={formData.expectedShipment} onChange={handleInputChange} />
+            <label htmlFor="expectedShipmentDate">Expected Shipment Date</label>
+            <input type="date" id="expectedShipmentDate" value={formData.expectedShipmentDate} onChange={handleInputChange} />
           </div>
         </div>
 
@@ -170,32 +176,24 @@ const SalesOrder = () => {
             <label htmlFor="paymentTerms">Payment Terms</label>
             <select id="paymentTerms" value={formData.paymentTerms} onChange={handleInputChange}>
               <option value="Due on Receipt">Due on Receipt</option>
-              {/* Add other payment terms as needed */}
+              <option value="Net 30">Net 30</option>
+              <option value="Net 60">Net 60</option>
             </select>
           </div>
           <div className="form-group">
             <label htmlFor="deliveryMethod">Delivery Method</label>
-            <select id="deliveryMethod" value={formData.deliveryMethod} onChange={handleInputChange}>
-              <option value="">Select a delivery method or type to add</option>
-              {/* Populate delivery methods from your database */}
-            </select>
+            <input type="text" id="deliveryMethod" value={formData.deliveryMethod} onChange={handleInputChange} />
           </div>
         </div>
 
         <div className="form-group">
           <label htmlFor="salesperson">Salesperson</label>
-          <select id="salesperson" value={formData.salesperson} onChange={handleInputChange}>
-            <option value="">Select or Add Salesperson</option>
-            {/* Populate salespersons from your database */}
-          </select>
+          <input type="text" id="salesperson" value={formData.salesperson} onChange={handleInputChange} />
         </div>
 
         <div className="form-group">
           <label htmlFor="priceList">Select Price List</label>
-          <select id="priceList" value={formData.priceList} onChange={handleInputChange}>
-            <option value="">Select Price List</option>
-            {/* Populate price lists from your database */}
-          </select>
+          <input type="text" id="priceList" value={formData.priceList} onChange={handleInputChange} />
         </div>
 
         <div className="item-table">
@@ -211,7 +209,7 @@ const SalesOrder = () => {
               </tr>
             </thead>
             <tbody>
-              {formData.itemDetails.map((item, index) => (
+              {formData.items.map((item, index) => (
                 <tr key={index}>
                   <td>
                     <input type="text" name="itemName" value={item.itemName} onChange={(e) => handleItemChange(index, e)} required />
@@ -240,17 +238,22 @@ const SalesOrder = () => {
 
         <div className="form-group">
           <label htmlFor="adjustment">Adjustment</label>
-          <input type="number" id="adjustment" value={formData.adjustment} onChange={handleInputChange} min="0" step="0.01" />
+          <input type="number" id="adjustment" value={formData.adjustment} onChange={handleInputChange} step="0.01" />
         </div>
 
         <div className="form-group">
-          <label htmlFor="terms">Terms</label>
-          <textarea id="terms" value={formData.terms} onChange={handleInputChange} />
+          <label htmlFor="termsAndConditions">Terms & Conditions</label>
+          <textarea id="termsAndConditions" value={formData.termsAndConditions} onChange={handleInputChange}></textarea>
         </div>
 
         <div className="form-group">
-          <label htmlFor="files">Upload Files</label>
-          <input type="file" id="files" multiple onChange={(e) => setFormData({ ...formData, files: e.target.files })} />
+          <label htmlFor="attachments">Attach Files</label>
+          <input 
+            type="file" 
+            id="attachments" 
+            onChange={(e) => setFormData({ ...formData, attachments: Array.from(e.target.files) })} 
+            multiple 
+          />
         </div>
 
         <button type="submit">Create Sales Order</button>
