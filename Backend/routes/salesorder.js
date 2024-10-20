@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const SalesOrder = require('../models/SalesOrder');
+const multer = require('multer');
+const path = require('path');
 
 // Create a new Sales Order
 router.post('/', async (req, res) => {
