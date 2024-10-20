@@ -1,207 +1,93 @@
-.sales-order {
-    font-family: Arial, sans-serif;
-    max-width: 1200px;
-    margin: 0 auto;
-    margin-right: 50px;
-    padding: 20px;
-    background-color: #f9f9f9; /* Light background for the form */
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+/* Main Content Styling */
+.main-content {
+    margin-left: 250px; 
+    padding: 20px; 
+    width: 150%;
 }
 
-h1 {
-    color: #333;
-    margin-bottom: 20px;
-    text-align: center; /* Center the main title */
+/* Form Container Styling */
+form {
+    background-color: #ffffff; 
+    border-radius: 8px; 
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
+    padding: 30px;
+    margin-bottom: 30px; 
 }
 
-.form-section {
-    margin-bottom: 30px;
-    padding: 20px;
-    background-color: white; /* Different background for sections */
-    border: 1px solid #ddd;
-    border-radius: 8px;
+/* Row Margins */
+.mb-4 {
+    margin-bottom: 1.5rem; /* Increased margin for bottom spacing between rows */
 }
 
-.section-title {
-    font-size: 1.5em;
-    color: #007bff;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #007bff;
-    padding-bottom: 10px;
-}
-
+/* Form Group Styling */
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px; /* Increased spacing between form fields */
 }
 
-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+/* Form Labels */
+.form-label {
+    font-weight: bold; /* Make labels stand out */
+    margin-bottom: 0.5rem; /* Space below labels */
 }
 
-input[type="text"],
-input[type="date"],
-input[type="number"],
-select,
-textarea {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
+/* Form Controls */
+.form-control {
+    padding: 10px; /* Added padding for input fields */
+    border-radius: 5px; /* Rounded corners */
+    border: 1px solid #ced4da; /* Border color */
+    transition: border-color 0.3s; /* Smooth transition for focus */
 }
 
-.select-wrapper {
-    position: relative;
+.form-control:focus {
+    border-color: #80bdff; /* Change border color on focus */
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Shadow effect on focus */
 }
 
-.select-wrapper::after {
-    content: "▼";
-    font-size: 12px;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    position: absolute;
-    pointer-events: none;
+/* Button Styling */
+button {
+    padding: 10px 20px; /* Padding for buttons */
+    border-radius: 5px; /* Rounded corners */
+    margin-top: 20px; /* Space above buttons */
 }
 
-.form-row {
-    display: flex;
-    gap: 20px;
+button.btn-primary {
+    background-color: #007bff; /* Primary button color */
+    border: none; /* Remove default border */
 }
 
-.form-row .form-group {
-    flex: 1;
+button.btn-primary:hover {
+    background-color: #0056b3; /* Darker on hover */
 }
 
-.item-table {
-    margin-top: 30px;
+/* Table Styling */
+.table {
+    margin-top: 20px; /* Space above the table */
+    margin-bottom: 20px; /* Space below the table */
+    border-radius: 8px; /* Rounded corners */
+    overflow: hidden; /* Ensure rounded corners on the table */
 }
 
-.item-table h2 {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #007bff;
-    font-size: 1.3em;
+.table th,
+.table td {
+    padding: 12px; /* Padding for table cells */
+    vertical-align: middle; /* Center content vertically */
 }
 
-.bulk-actions {
-    font-size: 14px;
-    color: #007bff;
-    cursor: pointer;
+/* Total Amount Styling */
+h4 {
+    margin-top: 20px; /* Space above the total amount */
+    font-weight: bold; /* Bold total amount */
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
+/* Dropdown Menu */
+.dropdown {
+    margin-bottom: 20px; /* Space below dropdown */
 }
 
-th, td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: left;
-}
-
-th {
-    background-color: #f8f9fa;
-}
-
-.add-row {
-    margin-top: 10px;
-    background-color: #f8f9fa;
-    border: 1px solid #ccc;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-
-.totals {
-    margin-top: 20px;
-}
-
-.total-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
-
-.total-row input {
-    width: 150px;
-}
-
-.upload-btn {
-    background-color: #f8f9fa;
-    border: 1px solid #ccc;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-
-.file-info {
-    font-size: 12px;
-    color: #666;
-    margin-top: 5px;
-}
-
-.action-buttons {
-    margin-top: 30px;
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-}
-
-.btn-draft,
-.btn-primary,
-.btn-cancel {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.btn-draft {
-    background-color: #f8f9fa;
-    color: #333;
-    border: 1px solid #ccc;
-}
-
-.btn-primary {
-    background-color: #007bff;
-    color: white;
-}
-
-.btn-cancel {
-    background-color: #dc3545;
-    color: white;
-}
-
-.total-amount {
-    margin-top: 20px;
-    display: flex;
-    justify-content: space-between;
-    font-weight: bold;
-}
-
-/* Specific section styling */
-.sales-order-section,
-.payment-section,
-.item-section,
-.totals-section {
-    padding: 20px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-
-.sales-order-section h2,
-.payment-section h2,
-.item-section h2,
-.totals-section h2 {
-    font-size: 1.2em;
-    color: #007bff;
-    border-bottom: 2px solid #007bff;
-    margin-bottom: 20px;
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0; /* Remove left margin on smaller screens */
+        padding: 10px; /* Reduce padding on smaller screens */
+    }
 }

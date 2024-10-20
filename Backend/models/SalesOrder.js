@@ -1,4 +1,3 @@
-// models/SalesOrder.js
 const mongoose = require('mongoose');
 
 const SalesOrderSchema = new mongoose.Schema({
@@ -27,6 +26,7 @@ const SalesOrderSchema = new mongoose.Schema({
       quantity: {
         type: Number,
         required: true,
+        min: 1, // Ensure quantity is at least 1
       },
       rate: {
         type: Number,
@@ -35,16 +35,23 @@ const SalesOrderSchema = new mongoose.Schema({
       discount: {
         type: Number,
         default: 0,
+        min: 0, // Ensure discount is non-negative
       },
-      amount: Number,
+      amount: Number, // Calculated dynamically or stored here if needed
     },
   ],
-  subTotal: Number,
-  shippingCharges: Number,
-  adjustment: Number,
-  totalAmount: Number,
+  subTotal: Number, // Optional: Calculated or stored
+  shippingCharges: {
+    type: Number,
+    default: 0, // Default to 0 if not provided
+  },
+  adjustment: {
+    type: Number,
+    default: 0, // Default to 0 if not provided
+  },
+  totalAmount: Number, // Calculated or stored
   termsAndConditions: String,
-  attachments: [String],
+  attachments: [String], // For file uploads or links
 }, { timestamps: true });
 
 const SalesOrder = mongoose.model('SalesOrder', SalesOrderSchema);

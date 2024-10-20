@@ -1,261 +1,319 @@
 import React, { useState, useEffect } from 'react';
+import { Form, Button, Table, Col, Row, Dropdown, Card } from 'react-bootstrap';
+import axios from 'axios';
 import './SalesOrder.css';
 import Sidebar from '../Sidebar';
-import axios from 'axios';
+import Footer from '../Footer';
+import Alertify from 'alertifyjs'; // for notifications
 
 const SalesOrder = () => {
-  const [formData, setFormData] = useState({
+  const [customers, setCustomers] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [order, setOrder] = useState({
     customer: '',
-    reference: '',
     salesOrderDate: '',
-    expectedShipment: '',
-    paymentTerms: 'Due on Receipt',
+    expectedShipmentDate: '',
+    paymentTerms: '',
     deliveryMethod: '',
     salesperson: '',
     priceList: '',
-    itemDetails: [{ itemName: '', quantity: 1, rate: 0, discount: 0, amount: 0 }],
+    items: [],
     shippingCharges: 0,
     adjustment: 0,
-    terms: '',
-    files: [],
-    salesOrder: '',  // Store the sales order number, now editable
+    totalAmount: 0,
+    termsAndConditions: '',
+    attachments: [],
   });
 
-  const [customers, setCustomers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
   useEffect(() => {
-    const fetchCustomers = async () => {
-      setLoading(true);
+    // Fetch customers and products from API
+    const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/customers');
-        setCustomers(response.data);
+        const customerResponse = await axios.get('http://localhost:5000/api/customers');
+        const productResponse = await axios.get('http://localhost:5000/api/products');
+        setCustomers(customerResponse.data);
+        setProducts(productResponse.data);
       } catch (error) {
-        console.error('Error fetching customers:', error);
-        setError('Failed to fetch customers. Please try again later.');
-      } finally {
-        setLoading(false);
+        console.error('Error fetching data:', error);
       }
     };
-
-    fetchCustomers();
+    fetchData();
   }, []);
 
-  const handleInputChange = (e) => {
-    const { id, value } = e.target;
-    setFormData({ ...formData, [id]: value });
+  const handleAddItem = (product) => {
+    const newItem = {
+      itemName: product.name,
+      quantity: 1,
+      rate: product.price,
+      discount: 0,
+      amount: product.price,
+    };
+    setOrder({ ...order, items: [...order.items, newItem] });
   };
 
-  const handleItemChange = (index, e) => {
-    const { name, value } = e.target;
-    const newItemDetails = [...formData.itemDetails];
-    newItemDetails[index][name] = value;
-
-    const quantity = parseFloat(newItemDetails[index].quantity) || 0;
-    const rate = parseFloat(newItemDetails[index].rate) || 0;
-    const discount = parseFloat(newItemDetails[index].discount) || 0;
-    const amount = (quantity * rate) - (quantity * rate * (discount / 100));
-    newItemDetails[index].amount = amount.toFixed(2);
-    setFormData({ ...formData, itemDetails: newItemDetails });
+  const handleRemoveItem = (index) => {
+    const updatedItems = [...order.items];
+    updatedItems.splice(index, 1);
+    setOrder({ ...order, items: updatedItems });
+    calculateTotal();
   };
 
-  const addItemRow = () => {
-    setFormData({
-      ...formData,
-      itemDetails: [...formData.itemDetails, { itemName: '', quantity: 1, rate: 0, discount: 0, amount: 0 }],
-    });
+  const handleQuantityChange = (index, value) => {
+    const updatedItems = [...order.items];
+    updatedItems[index].quantity = value;
+    updatedItems[index].amount = updatedItems[index].quantity * updatedItems[index].rate - (updatedItems[index].quantity * updatedItems[index].rate * updatedItems[index].discount / 100);
+    setOrder({ ...order, items: updatedItems });
+    calculateTotal();
+  };
+
+  const calculateTotal = () => {
+    const subTotal = order.items.reduce((sum, item) => sum + item.amount, 0);
+    const total = subTotal + Number(order.shippingCharges) + Number(order.adjustment);
+    setOrder({ ...order, totalAmount: total });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Create FormData object for file uploads
-    const dataToSubmit = new FormData();
-    Object.keys(formData).forEach(key => {
-      if (key === 'files') {
-        Array.from(formData.files).forEach(file => {
-          dataToSubmit.append(key, file);
-        });
-      } else {
-        dataToSubmit.append(key, formData[key]);
-      }
-    });
-
     try {
-      const response = await axios.post('http://localhost:5000/api/salesorders', dataToSubmit, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      // Use the provided sales order number instead of response data
-      alert(`Sales Order ${formData.salesOrder} created successfully!`);
-      // Reset form without salesOrder
-      setFormData({
+      await axios.post('http://localhost:5000/api/salesorders', order);
+      Alertify.success('Sales Order created successfully!');
+      // Reset order state after submission
+      setOrder({
         customer: '',
-        reference: '',
         salesOrderDate: '',
-        expectedShipment: '',
-        paymentTerms: 'Due on Receipt',
+        expectedShipmentDate: '',
+        paymentTerms: '',
         deliveryMethod: '',
         salesperson: '',
         priceList: '',
-        itemDetails: [{ itemName: '', quantity: 1, rate: 0, discount: 0, amount: 0 }],
+        items: [],
         shippingCharges: 0,
         adjustment: 0,
-        terms: '',
-        files: [],
-        salesOrder: '', // Reset sales order number
+        totalAmount: 0,
+        termsAndConditions: '',
+        attachments: [],
       });
     } catch (error) {
-      console.error('There was an error creating the sales order!', error);
-      alert('Failed to create sales order. Please try again.');
+      Alertify.error('Error creating Sales Order!');
     }
   };
 
+  const handleAttachmentChange = (e) => {
+    setOrder({ ...order, attachments: [...e.target.files] });
+  };
+
   return (
-    <div className="sales-order">
+    <>
       <Sidebar />
-      <h1>New Sales Order</h1>
-      {error && <div className="error-message">{error}</div>}
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="customer">Customer Name*</label>
-          <div className="select-wrapper">
-            {loading ? (
-              <p>Loading customers...</p>
-            ) : (
-              <select id="customer" value={formData.customer} onChange={handleInputChange} required>
-                <option value="">Select a customer</option>
-                {customers.map((customer) => (
-                  <option key={customer._id} value={customer._id}>
-                    {customer.displayName || `${customer.firstName} ${customer.lastName}`}
-                  </option>
-                ))}
-              </select>
-            )}
-          </div>
-        </div>
+      <Card.Header className="text-center custom-card-header">
+                <h3>Add Sales Order</h3>
+       </Card.Header>
+      <div className="main-content">
+        <Form onSubmit={handleSubmit}>
+          <Row className="mb-4">
+            <Col md={6}>
+              <Form.Group controlId="customer">
+                <Form.Label>Customer</Form.Label>
+                <Form.Control
+                  as="select"
+                  value={order.customer}
+                  onChange={(e) => setOrder({ ...order, customer: e.target.value })}
+                  required
+                >
+                  <option>Select a customer</option>
+                  {customers.map((customer) => (
+                    <option key={customer._id} value={customer._id}>
+                      {customer.firstName}
+                    </option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group controlId="salesOrderDate">
+                <Form.Label>Sales Order Date</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={order.salesOrderDate}
+                  onChange={(e) => setOrder({ ...order, salesOrderDate: e.target.value })}
+                  required
+                />
+              </Form.Group>
+            </Col>
+          </Row>
 
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="salesOrder">Sales Order#*</label>
-            <input 
-              type="text" 
-              id="salesOrder" 
-              value={formData.salesOrder} 
-              onChange={handleInputChange} // Allow user to input sales order number
-              required 
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="reference">Reference#</label>
-            <input type="text" id="reference" value={formData.reference} onChange={handleInputChange} />
-          </div>
-        </div>
+          <Row className="mb-4">
+            <Col md={6}>
+              <Form.Group controlId="expectedShipmentDate">
+                <Form.Label>Expected Shipment Date</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={order.expectedShipmentDate}
+                  onChange={(e) => setOrder({ ...order, expectedShipmentDate: e.target.value })}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group controlId="paymentTerms">
+                <Form.Label>Payment Terms</Form.Label>
+                <Form.Control
+                  as="select"
+                  value={order.paymentTerms}
+                  onChange={(e) => setOrder({ ...order, paymentTerms: e.target.value })}
+                >
+                  <option>Select payment terms</option>
+                  <option>Net 30</option>
+                  <option>Net 60</option>
+                  <option>Due on receipt</option>
+                </Form.Control>
+              </Form.Group>
+            </Col>
+          </Row>
 
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="salesOrderDate">Sales Order Date*</label>
-            <input type="date" id="salesOrderDate" value={formData.salesOrderDate} onChange={handleInputChange} required />
-          </div>
-          <div className="form-group">
-            <label htmlFor="expectedShipment">Expected Shipment Date</label>
-            <input type="date" id="expectedShipment" value={formData.expectedShipment} onChange={handleInputChange} />
-          </div>
-        </div>
+          <Row className="mb-4">
+            <Col md={6}>
+              <Form.Group controlId="deliveryMethod">
+                <Form.Label>Delivery Method</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={order.deliveryMethod}
+                  onChange={(e) => setOrder({ ...order, deliveryMethod: e.target.value })}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group controlId="salesperson">
+                <Form.Label>Salesperson</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={order.salesperson}
+                  onChange={(e) => setOrder({ ...order, salesperson: e.target.value })}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
 
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="paymentTerms">Payment Terms</label>
-            <select id="paymentTerms" value={formData.paymentTerms} onChange={handleInputChange}>
-              <option value="Due on Receipt">Due on Receipt</option>
-              {/* Add other payment terms as needed */}
-            </select>
-          </div>
-          <div className="form-group">
-            <label htmlFor="deliveryMethod">Delivery Method</label>
-            <select id="deliveryMethod" value={formData.deliveryMethod} onChange={handleInputChange}>
-              <option value="">Select a delivery method or type to add</option>
-              {/* Populate delivery methods from your database */}
-            </select>
-          </div>
-        </div>
+          <Row className="mb-4">
+            <Col md={6}>
+              <Form.Group controlId="priceList">
+                <Form.Label>Price List</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={order.priceList}
+                  onChange={(e) => setOrder({ ...order, priceList: e.target.value })}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group controlId="termsAndConditions">
+                <Form.Label>Terms and Conditions</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  value={order.termsAndConditions}
+                  onChange={(e) => setOrder({ ...order, termsAndConditions: e.target.value })}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
 
-        <div className="form-group">
-          <label htmlFor="salesperson">Salesperson</label>
-          <select id="salesperson" value={formData.salesperson} onChange={handleInputChange}>
-            <option value="">Select or Add Salesperson</option>
-            {/* Populate salespersons from your database */}
-          </select>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="priceList">Select Price List</label>
-          <select id="priceList" value={formData.priceList} onChange={handleInputChange}>
-            <option value="">Select Price List</option>
-            {/* Populate price lists from your database */}
-          </select>
-        </div>
-
-        <div className="item-table">
-          <h2>Item Table <span className="bulk-actions">Bulk Actions</span></h2>
-          <table>
+          {/* Product Table */}
+          <Table striped bordered hover className="mb-4">
             <thead>
               <tr>
-                <th>ITEM DETAILS</th>
-                <th>QUANTITY</th>
-                <th>RATE</th>
-                <th>DISCOUNT %</th>
-                <th>AMOUNT</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Rate</th>
+                <th>Discount</th>
+                <th>Amount</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {formData.itemDetails.map((item, index) => (
+              {order.items.map((item, index) => (
                 <tr key={index}>
+                  <td>{item.itemName}</td>
                   <td>
-                    <input type="text" name="itemName" value={item.itemName} onChange={(e) => handleItemChange(index, e)} required />
+                    <Form.Control
+                      type="number"
+                      value={item.quantity}
+                      onChange={(e) => handleQuantityChange(index, e.target.value)}
+                    />
                   </td>
+                  <td>{item.rate}</td>
+                  <td>{item.discount}%</td>
+                  <td>{item.amount.toFixed(2)}</td>
                   <td>
-                    <input type="number" name="quantity" value={item.quantity} onChange={(e) => handleItemChange(index, e)} min="1" required />
+                    <Button variant="danger" onClick={() => handleRemoveItem(index)}>
+                      Remove
+                    </Button>
                   </td>
-                  <td>
-                    <input type="number" name="rate" value={item.rate} onChange={(e) => handleItemChange(index, e)} min="0" step="0.01" required />
-                  </td>
-                  <td>
-                    <input type="number" name="discount" value={item.discount} onChange={(e) => handleItemChange(index, e)} min="0" max="100" step="0.01" />
-                  </td>
-                  <td>{item.amount}</td>
                 </tr>
               ))}
             </tbody>
-          </table>
-          <button type="button" onClick={addItemRow}>Add Item</button>
-        </div>
+          </Table>
 
-        <div className="form-group">
-          <label htmlFor="shippingCharges">Shipping Charges</label>
-          <input type="number" id="shippingCharges" value={formData.shippingCharges} onChange={handleInputChange} min="0" step="0.01" />
-        </div>
+          <Dropdown className="mb-4">
+            <Dropdown.Toggle variant="success" id="dropdown-basic">
+              Add Products
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              {products.map((product) => (
+                <Dropdown.Item key={product._id} onClick={() => handleAddItem(product)}>
+                  {product.name} - ${product.price}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
 
-        <div className="form-group">
-          <label htmlFor="adjustment">Adjustment</label>
-          <input type="number" id="adjustment" value={formData.adjustment} onChange={handleInputChange} min="0" step="0.01" />
-        </div>
+          <Row className="mb-4">
+            <Col md={4}>
+              <Form.Group controlId="shippingCharges">
+                <Form.Label>Shipping Charges</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={order.shippingCharges}
+                  onChange={(e) => {
+                    setOrder({ ...order, shippingCharges: e.target.value });
+                    calculateTotal();
+                  }}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group controlId="adjustment">
+                <Form.Label>Adjustment</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={order.adjustment}
+                  onChange={(e) => {
+                    setOrder({ ...order, adjustment: e.target.value });
+                    calculateTotal();
+                  }}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <h4>Total Amount: ${order.totalAmount.toFixed(2)}</h4>
+            </Col>
+          </Row>
 
-        <div className="form-group">
-          <label htmlFor="terms">Terms</label>
-          <textarea id="terms" value={formData.terms} onChange={handleInputChange} />
-        </div>
+          <Form.Group controlId="attachments">
+            <Form.Label>Attachments</Form.Label>
+            <Form.Control
+              type="file"
+              multiple
+              onChange={handleAttachmentChange}
+            />
+          </Form.Group>
 
-        <div className="form-group">
-          <label htmlFor="files">Upload Files</label>
-          <input type="file" id="files" multiple onChange={(e) => setFormData({ ...formData, files: e.target.files })} />
-        </div>
-
-        <button type="submit">Create Sales Order</button>
-      </form>
-    </div>
+          <Button variant="primary" type="submit">
+            Submit Sales Order
+          </Button>
+        </Form>
+      </div>
+      <Footer />
+    </>
   );
 };
 
