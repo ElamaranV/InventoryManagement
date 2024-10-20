@@ -24,6 +24,27 @@ export default function AddCustomer() {
   });
 
   const [copyBilling, setCopyBilling] = useState(false);
+  const [ errors, setErrors] = useState({});
+
+  const validateForm = () =>{
+    const errors = {};
+
+    if( newCustomer.displayName.trim() === ''){
+      errors.displayName = 'Customer Display Name is required';
+    }
+
+    if(!newCustomer.email.includes('@')){
+      errors.email = 'Invalid email format';
+    }
+
+    const phoneNumber = newCustomer.phoneType === 'work' ? newCustomer.workPhone : newCustomer.mobilePhone;
+    if(phoneNumber.trim().length < 10){
+      errors.phone = 'Phone number must be at least 10 digits !';
+    }
+
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
+  }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -35,6 +56,10 @@ export default function AddCustomer() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if(!validateForm()){
+      return;
+    }
+    
     try {
       // Send data to the backend
       const response = await axios.post('http://localhost:5000/api/customers', newCustomer);

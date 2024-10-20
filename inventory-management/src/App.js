@@ -12,6 +12,7 @@ import VendorDetails from './Components/VendorDetails/VendorDetails';
 import AddVendor from './Components/AddVendor/AddVendor';
 import CustomerPage from './Components/CustomerPage/CustomerPage';
 import AddCustomer from './Components/CustomerPage/AddCustomer';
+import SalesOrder from './Components/SalesOrder/SalesOrder'
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
             <Route path='/customers' element={<CustomerPage/>} />
             <Route path='/add-customer' element={<AddCustomer/>} />
             <Route path="/edit-customer/:id" element={<AddCustomer />} />
+            <Route path = "/SalesOrder" element ={<SalesOrder/>} />
 
           </Routes>
         </div>

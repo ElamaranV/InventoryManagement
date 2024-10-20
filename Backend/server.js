@@ -5,7 +5,7 @@ const multer = require('multer');
 const vendorRoutes = require('./routes/vendorRoutes');
 const productRoutes = require('./routes/productRoutes');
 const customerRoutes = require('./routes/customerRoutes');  
-
+const salesOrderRoutes = require('./routes/salesorder');
 // Initialize Express
 const app = express();
 
@@ -29,8 +29,7 @@ const upload = multer({ storage });
 
 // MongoDB connection
 mongoose.connect('mongodb://localhost:27017/inventory', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+  
 })
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err));
@@ -78,12 +77,11 @@ app.get('/test', (req, res) => {
   res.send('Test route working');
 });
 
-// Product and Vendor Routes
+ //Routes
 app.use('/api/products', productRoutes);
 app.use('/api/vendors', vendorRoutes);
-
-//Add Customer Routes
 app.use('/api/customers', customerRoutes);
+app.use('/api/salesorders', salesOrderRoutes);
 
 app.use('*', (req, res) => {
   console.log(`Received request for ${req.originalUrl}`);
