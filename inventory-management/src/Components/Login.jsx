@@ -1,54 +1,116 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import './Login.css';
-
+import { Form, Button, Alert } from 'react-bootstrap';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [otp, setOtp] = useState('');
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Add validation logic here
-    if (username === 'admin' && password === 'password') {
-      window.location.href = '/dashboard'; // Redirect to dashboard
-    } else {
-      alert("Invalid credentials");
+    setError('');
+    setSuccess('');
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/login', { email, password });
+      if (response.data.success) {
+        setSuccess('Password correct. Please check your email for OTP.');
+        setIsOtpSent(true);
+      } else {
+        setError(response.data.message);
+      }
+    } catch (error) {
+      console.error('Error logging in:', error);
+      setError('An error occurred during login.');
     }
   };
 
-  return (
-    <>
-    <div className="login-container">
-      <form className="login-form" onSubmit={handleLogin}>
-        <h2 className="login-title">Login</h2>
-        <div className="input-group">
-          <label htmlFor="username">Username</label>
-          <input
-            id="username"
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div className="input-group">
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button className="login-button" type="submit">Login</button>
-        <div className="additional-options">
-          <a href="/forgot-password">Forgot password?</a>
-        </div>
-      </form>
-    </div>
+  const handleOtpVerification = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+  
+    try {
+      const response = await axios.post('http://localhost:5000/api/verify-otp', { email, otp });
+      if (response.data.success) {
+        setSuccess('OTP verified. Redirecting to dashboard...');
+        
+        // Redirect to dashboard after OTP verification
+        setTimeout(() => {
+          window.location.href = '/dashboard'; // Redirect to dashboard page
+        }, 2000); // 2 seconds delay for a better user experience
+  
+        // Commented code to prevent manual URL change to access the dashboard
+        /*
+        const protectRoute = () => {
+          if (!response.data.success) {
+            window.location.href = '/login'; // Redirect to login if not verified
+          }
+        };
+        protectRoute();
+        */
+      } else {
+        setError(response.data.message);
+      }
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      setError('An error occurred during OTP verification.');
+    }
+  };
+  
 
-    </>
+  return (
+    <div className="login-container">
+      <Form onSubmit={isOtpSent ? handleOtpVerification : handleLogin}>
+        <h2 className="login-title">{isOtpSent ? 'Enter OTP' : 'Login'}</h2>
+        {error && <Alert variant="danger">{error}</Alert>}
+        {success && <Alert variant="success">{success}</Alert>}
+
+        {!isOtpSent && (
+          <>
+            <Form.Group>
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </Form.Group>
+          </>
+        )}
+
+        {isOtpSent && (
+          <Form.Group>
+            <Form.Label>Enter OTP</Form.Label>
+            <Form.Control
+              type="text"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              required
+            />
+          </Form.Group>
+        )}
+
+        <Button type="submit" className="login-button">
+          {isOtpSent ? 'Verify OTP' : 'Login'}
+        </Button>
+      </Form>
+    </div>
   );
 };
 

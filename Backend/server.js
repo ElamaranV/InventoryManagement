@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const multer = require('multer');
+const nodemailer = require('nodemailer');
 const vendorRoutes = require('./routes/vendorRoutes');
 const productRoutes = require('./routes/productRoutes');
 const customerRoutes = require('./routes/customerRoutes');  
@@ -13,6 +14,117 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static('uploads'));
+
+// User Schema
+const userSchema = new mongoose.Schema({
+  username: String,
+  email: String,
+  password: String,
+  otp: String,
+  otpExpiresAt: Date
+});
+
+const User = mongoose.model('User', userSchema);
+
+// Nodemailer setup for sending OTP emails
+const transporter = nodemailer.createTransport({
+  service: 'Gmail', 
+  auth: {
+    user: 'hathish113@gmail.com', 
+    pass: 'pqaa siov azdw yyrw',  
+  },
+});
+
+// User Login Route
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    console.log('Login attempt for email:', email);
+    
+    // Check if user exists in the database
+    const user = await User.findOne({ email });
+    
+    if (!user) {
+      console.log('User not found for email:', email);
+      return res.json({ success: false, message: 'User not found' });
+    }
+
+    if (user.password !== password) {
+      console.log('Invalid password for email:', email);
+      return res.json({ success: false, message: 'Invalid password' });
+    }
+
+    // Generate OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString(); 
+    user.otp = otp;
+    user.otpExpiresAt = Date.now() + 5 * 60 * 1000; // OTP expires in 5 minutes
+
+    await user.save(); 
+
+    // Send OTP via email
+    const mailOptions = {
+      from: 'no-reply@gmail.com',
+      to: email,
+      subject: 'Login OTP for EA INVENTORY',
+      text: `Dear User, 
+       We received a request to log in to your account. Please use the verification code below to complete the login process:
+                      Verification Code: ${otp}
+
+      This code is valid for the next 5 minutes. If you did not request this, please ignore this message. 
+
+        Thank you, 
+        EA INVENTORY`
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('Error sending email:', error);
+        return res.json({ success: false, message: 'Error sending OTP', error: error.message });
+      }
+      console.log('Email sent successfully:', info.response);
+      res.json({ success: true, message: 'OTP sent to email' });
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ success: false, message: 'Server error during login', error: error.message });
+  }
+});
+
+
+app.post('/api/verify-otp', async (req, res) => {
+  const { email, otp } = req.body;
+
+  try {
+    // Find the user by email
+    const user = await User.findOne({ email });
+
+    if (!user || !user.otp) {
+      return res.json({ success: false, message: 'OTP expired or invalid' });
+    }
+
+    // Check if OTP has expired
+    const currentTime = Date.now();
+    if (currentTime > user.otpExpiresAt) {
+      return res.json({ success: false, message: 'OTP expired' });
+    }
+
+    // Verify the OTP
+    if (user.otp === otp) {
+      // OTP is correct, so we clear it from the database
+      user.otp = undefined;
+      user.otpExpiresAt = undefined;
+      await user.save();
+
+      return res.json({ success: true, message: 'OTP verified. Login successful.' });
+    } else {
+      return res.json({ success: false, message: 'Invalid OTP' });
+    }
+  } catch (error) {
+    console.error('Error verifying OTP:', error);
+    return res.status(500).json({ success: false, message: 'Server error', error: error.message });
+  }
+});
 
 // Multer storage configuration
 const storage = multer.diskStorage({
