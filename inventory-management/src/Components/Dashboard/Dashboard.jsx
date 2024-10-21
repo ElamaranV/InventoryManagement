@@ -1,101 +1,218 @@
-import React, { useState, useEffect } from 'react';
-import './Dashboard.css';
-import { FaShoppingCart, FaMoneyBillAlt, FaUserCircle } from 'react-icons/fa';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import Sidebar from '../Sidebar';
-import Footer from '../Footer';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Package, Truck, FileText, DollarSign } from "lucide-react";
+import Sidebar from '../Sidebar';
+import './Dashboard.css';
 
-const data = [
-  { name: 'Jan', sales: 4000 },
-  { name: 'Feb', sales: 3000 },
-  { name: 'Mar', sales: 2000 },
-  { name: 'Apr', sales: 2780 },
-  { name: 'May', sales: 1890 },
-  { name: 'Jun', sales: 2390 },
-  { name: 'Jul', sales: 3490 },
-];
+export default function Dashboard() {
+  // State variables for fetched data
+  const [toBeShippedCount, setToBeShippedCount] = useState(0);
+  const [toBeDeliveredCount, setToBeDeliveredCount] = useState(0);
+  const [quantityInHand, setQuantityInHand] = useState(0);
+  const [lowStockItems, setLowStockItems] = useState(0);
+  const [topSellingItem, setTopSellingItem] = useState('');
 
-const Dashboard = () => {
-  const [vendors, setVendors] = useState([]);
-
+  // Fetch data from APIs on component mount
   useEffect(() => {
-    const fetchVendors = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/vendors'); // Change to your API endpoint
-        setVendors(response.data.slice(0, 3)); // Fetch the top 3 recent vendors
-      } catch (error) {
-        console.error('Error fetching vendor data:', error);
-      }
-    };
-    
-    fetchVendors();
+    fetchToBeShipped();
+    fetchToBeDelivered();
+    fetchQuantityInHand();
+    fetchLowStockItems();
+    fetchTopSellingItem();
   }, []);
 
+  // Function to fetch 'To Be Shipped' count
+  const fetchToBeShipped = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/salesorder');
+      const currentDate = new Date();
+
+      // Filter based on the condition where the current date is less than the expectedShipmentDate
+      const count = response.data.filter(order => new Date(order.expectedShipmentDate) > currentDate).length;
+      setToBeShippedCount(count);
+    } catch (error) {
+      console.error('Error fetching To Be Shipped count:', error);
+    }
+  };
+
+  // Function to fetch 'To Be Delivered' count
+  const fetchToBeDelivered = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/salesorder');
+      const currentDate = new Date();
+
+      // Filter based on the condition where the expectedShipmentDate is earlier than the current date
+      const count = response.data.filter(order => new Date(order.expectedShipmentDate) < currentDate).length;
+      setToBeDeliveredCount(count);
+    } catch (error) {
+      console.error('Error fetching To Be Delivered count:', error);
+    }
+  };
+
+  // Function to fetch 'Quantity in Hand' from product API
+  const fetchQuantityInHand = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/product');
+      console.log('Fetched products:', response.data); // Debugging log
+
+      const totalQuantity = response.data.reduce((total, product) => total + product.openingStock, 0);
+      setQuantityInHand(totalQuantity);
+    } catch (error) {
+      console.error('Error fetching Quantity in Hand:', error);
+    }
+  };
+
+  // Function to fetch 'Low Stock Items' from product API
+  const fetchLowStockItems = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/product');
+      const lowStockCount = response.data.filter(product => product.openingStock <= product.reorderPoint).length;
+      setLowStockItems(lowStockCount);
+    } catch (error) {
+      console.error('Error fetching Low Stock Items:', error);
+    }
+  };
+
+  // Function to fetch 'Top Selling Item' from sales order API
+  const fetchTopSellingItem = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/salesorder');
+      const productSales = {};
+
+      // Count the occurrences of each product sold in sales orders
+      response.data.forEach(order => {
+        order.items.forEach(item => {
+          productSales[item.itemName] = (productSales[item.itemName] || 0) + item.quantity;
+        });
+      });
+
+      // Find the product with the highest sales count
+      const topProduct = Object.keys(productSales).reduce((a, b) => productSales[a] > productSales[b] ? a : b);
+      setTopSellingItem(topProduct);
+    } catch (error) {
+      console.error('Error fetching Top Selling Item:', error);
+    }
+  };
+
   return (
-    <div className="dashboard-layout">
+    <div className="dashboard-container">
       <Sidebar/>
-      <div className="dashboard-content">
-        <h2>Ecommerce Dashboard</h2>
-        <p className="dashboard-subtitle">Here’s what’s going on at your business right now</p>
-        <div className="dashboard-cards">
-          <div className="card">
-            <FaShoppingCart className="card-icon" />
-            <h3>57 new orders</h3>
-            <p>Awaiting processing</p>
+      <div className="grid-2-col">
+        <div className="card">
+          <div className="card-header">
+            <h2 className="card-title">Sales Activity</h2>
           </div>
-          <div className="card">
-            <FaMoneyBillAlt className="card-icon" />
-            <h3>5 orders</h3>
-            <p>On hold</p>
-          </div>
-          <div className="card">
-            <FaUserCircle className="card-icon" />
-            <h3>15 products</h3>
-            <p>Out of stock</p>
+          <div className="card-content">
+            <div className="grid-4-col">
+              <div className="stat-item">
+                <span className="stat-number blue">51</span>
+                <span className="stat-label">Qty</span>
+                <div className="stat-detail">
+                  <Package className="icon" />
+                  TO BE PACKED
+                </div>
+              </div>
+              <div className="stat-item">
+                <span className="stat-number red">{toBeShippedCount}</span>
+                <span className="stat-label">Pkgs</span>
+                <div className="stat-detail">
+                  <Truck className="icon" />
+                  TO BE SHIPPED
+                </div>
+              </div>
+              <div className="stat-item">
+                <span className="stat-number green">{toBeDeliveredCount}</span>
+                <span className="stat-label">Pkgs</span>
+                <div className="stat-detail">
+                  <Truck className="icon" />
+                  TO BE DELIVERED
+                </div>
+              </div>
+              <div className="stat-item">
+                <span className="stat-number yellow">97</span>
+                <span className="stat-label">Qty</span>
+                <div className="stat-detail">
+                  <FileText className="icon" />
+                  TO BE INVOICED
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        
-        <div className="dashboard-chart">
-          <h3>Total Sales</h3>
-          <p>Payment received across all channels</p>
-          <LineChart width={976} height={400} data={data}>
-            <XAxis dataKey="name" />
-            <YAxis />
-            <CartesianGrid strokeDasharray="3 3" />
-            <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="sales" stroke="#8884d8" />
-          </LineChart>
+
+        <div className="card">
+          <div className="card-header">
+            <h2 className="card-title">Inventory Summary</h2>
+          </div>
+          <div className="card-content">
+            <div className="inventory-summary">
+              <div className="inventory-item">
+                <span className="label">QUANTITY IN HAND</span>
+                <span className="value">{quantityInHand}</span>
+              </div>
+              <div className="inventory-item">
+                <span className="label">QUANTITY TO BE RECEIVED</span>
+                <span className="value">62</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid-2-col">
+        <div className="card">
+          <div className="card-header">
+            <h2 className="card-title">Product Details</h2>
+          </div>
+          <div className="card-content">
+            <div className="grid-2-col">
+              <div>
+                <div className="product-detail">
+                  <span className="red-text">Low Stock Items</span>
+                  <span className="value">{lowStockItems}</span>
+                </div>
+                <div className="product-detail">
+                  <span className="label">All Item Groups</span>
+                  <span className="value">34</span>
+                </div>
+                <div className="product-detail">
+                  <span className="label">All Items</span>
+                  <span className="value">129</span>
+                </div>
+              </div>
+              <div className="progress-circle-container">
+                <div className="progress-circle">
+                  <div className="progress-inner-circle"></div>
+                  <div className="progress-cover">
+                    <span className="progress-text">78%</span>
+                  </div>
+                </div>
+                <span className="label">Active Items</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="dashboard-recent">
-  <h3 className="mb-4">Recent Vendors</h3>
-  <div className="table-responsive">
-    <table className="table table-striped table-hover table-bordered">
-      <thead className="thead-dark">
-        <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Phone</th>
-        </tr>
-      </thead>
-      <tbody>
-        {vendors.map(vendor => (
-          <tr key={vendor._id}>
-            <td>{vendor.vendorName}</td>
-            <td>{vendor.email}</td>
-            <td>{vendor.phoneNumber}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-</div>
-
+        <div className="card">
+          <div className="card-header">
+            <h2 className="card-title">Top Selling Items</h2>
+            <select className="dropdown">
+              <option>This Month</option>
+            </select>
+          </div>
+          <div className="card-content">
+            <div className="grid-3-col">
+              <div className="product-item">
+                <div className="icon-container">
+                  <DollarSign className="icon-lg" />
+                </div>
+                <span className="product-name">{topSellingItem}</span>
+                <span className="product-weight">Sold Quantity</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
-};
-
-export default Dashboard;
+}

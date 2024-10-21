@@ -9,7 +9,6 @@ const productSchema = new mongoose.Schema({
     collection: { type: String },
     regularPrice: { type: Number, required: true },
     salePrice: { type: Number },
-    variants: { type: Object },
     sku: { type: String, required: true },
     weight: { type: String },
     dimensions: { type: String },

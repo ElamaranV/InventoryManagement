@@ -269,29 +269,6 @@ const AddProduct = () => {
               </div>
             </div>
 
-            <div className="variants">
-              <h3>Variants</h3>
-              <div className="variant-options">
-                <div className="option">
-                  <label>Option 1</label>
-                  <input
-                    type="text"
-                    placeholder="Enter option 1 (e.g., Size or Color)"
-                    value={variantOption1}
-                    onChange={(e) => setVariantOption1(e.target.value)}
-                  />
-                </div>
-                <div className="option">
-                  <label>Option 2</label>
-                  <input
-                    type="text"
-                    placeholder="Enter option 2 (e.g., Size or Color)"
-                    value={variantOption2}
-                    onChange={(e) => setVariantOption2(e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
 
             <div className="track-inventory-section">
               <h3>Track Inventory</h3>
