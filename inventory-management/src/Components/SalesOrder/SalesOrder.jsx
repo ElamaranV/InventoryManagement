@@ -25,8 +25,8 @@ const SalesOrder = () => {
     attachments: [],
   });
 
+  // Fetch customers and products from API
   useEffect(() => {
-    // Fetch customers and products from API
     const fetchData = async () => {
       try {
         const customerResponse = await axios.get('http://localhost:5000/api/customers');
@@ -40,17 +40,20 @@ const SalesOrder = () => {
     fetchData();
   }, []);
 
+  // Handle adding product to sales order
   const handleAddItem = (product) => {
     const newItem = {
-      itemName: product.name,
+      itemName: product.productTitle,
       quantity: 1,
-      rate: product.price,
+      rate: product.openingStockPrice,
       discount: 0,
       amount: product.price,
+      productId: product._id // Capture the product ID for later use
     };
     setOrder({ ...order, items: [...order.items, newItem] });
   };
 
+  // Handle removing product from sales order
   const handleRemoveItem = (index) => {
     const updatedItems = [...order.items];
     updatedItems.splice(index, 1);
@@ -58,25 +61,76 @@ const SalesOrder = () => {
     calculateTotal();
   };
 
+ 
+
+
+  // Handle changing product quantity
   const handleQuantityChange = (index, value) => {
     const updatedItems = [...order.items];
-    updatedItems[index].quantity = value;
-    updatedItems[index].amount = updatedItems[index].quantity * updatedItems[index].rate - (updatedItems[index].quantity * updatedItems[index].rate * updatedItems[index].discount / 100);
+    const quantity = Math.max(0, value); // Ensure quantity is not less than 0
+
+    if (value < 0) {
+      Alertify.warning('Quantity cannot be less than 0');
+    }
+
+    updatedItems[index].quantity = quantity;
+    updatedItems[index].amount = updatedItems[index].quantity * updatedItems[index].rate
+      - (updatedItems[index].quantity * updatedItems[index].rate * updatedItems[index].discount / 100);
     setOrder({ ...order, items: updatedItems });
     calculateTotal();
   };
 
+  const handleShippingChange = (e) => {
+    const value = Math.max(0, parseFloat(e.target.value) || 0); // Convert to number and ensure it's not negative
+    setOrder((prevOrder) => ({ ...prevOrder, shippingCharges: value }));
+    calculateTotal(); // Recalculate total
+  };
+  
+  const handleAdjustmentChange = (e) => {
+    const value = Math.max(0, parseFloat(e.target.value) || 0); // Convert to number and ensure it's not negative
+    setOrder((prevOrder) => ({ ...prevOrder, adjustment: value }));
+    calculateTotal(); // Recalculate total
+  };
+
+  // Calculate total amount
   const calculateTotal = () => {
     const subTotal = order.items.reduce((sum, item) => sum + item.amount, 0);
-    const total = subTotal + Number(order.shippingCharges) + Number(order.adjustment);
+    const shipping = Number(order.shippingCharges) || 0 ;
+    const adjustment = Number(order.adjustment) ||0;
+    const total = subTotal + shipping+ adjustment;
     setOrder({ ...order, totalAmount: total });
   };
 
+  // Update product stock after sales order submission
+  const updateProductStock = async () => {
+    const stockUpdatePromises = order.items.map(async (item) => {
+      const productToUpdate = products.find((product) => product._id === item.productId);
+      if (productToUpdate) {
+        const updatedStock = productToUpdate.openingStock - item.quantity;
+        return axios.put(`http://localhost:5000/api/products/${productToUpdate._id}`, {
+          openingStock: updatedStock,
+        });
+      }
+    });
+
+    try {
+      await Promise.all(stockUpdatePromises);
+      Alertify.success('Product stock updated successfully!');
+    } catch (error) {
+      Alertify.error('Error updating product stock.');
+    }
+  };
+
+  // Handle sales order form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/salesorders', order);
+      await axios.post('http://localhost:5000/api/salesorder', order);
       Alertify.success('Sales Order created successfully!');
+
+      // Update the product stock after successful sales order submission
+      await updateProductStock();
+
       // Reset order state after submission
       setOrder({
         customer: '',
@@ -98,16 +152,15 @@ const SalesOrder = () => {
     }
   };
 
-  const handleAttachmentChange = (e) => {
-    setOrder({ ...order, attachments: [...e.target.files] });
-  };
+  // Handle file attachment changes
+ 
 
   return (
     <>
       <Sidebar />
       <Card.Header className="text-center custom-card-header">
-                <h3>Add Sales Order</h3>
-       </Card.Header>
+        <h3>Add Sales Order</h3>
+      </Card.Header>
       <div className="main-content">
         <Form onSubmit={handleSubmit}>
           <Row className="mb-4">
@@ -242,7 +295,9 @@ const SalesOrder = () => {
                   </td>
                   <td>{item.rate}</td>
                   <td>{item.discount}%</td>
-                  <td>{item.amount.toFixed(2)}</td>
+                  {/* Check for undefined before calling toFixed */}
+                  <td>{item.amount ? item.amount.toFixed(2) : '0.00'}</td> 
+                  {/* Action button to remove item */}
                   <td>
                     <Button variant="danger" onClick={() => handleRemoveItem(index)}>
                       Remove
@@ -253,66 +308,46 @@ const SalesOrder = () => {
             </tbody>
           </Table>
 
+          {/* Dropdown to add products */}
           <Dropdown className="mb-4">
             <Dropdown.Toggle variant="success" id="dropdown-basic">
               Add Products
             </Dropdown.Toggle>
+
+            {/* Product options */}
             <Dropdown.Menu>
               {products.map((product) => (
                 <Dropdown.Item key={product._id} onClick={() => handleAddItem(product)}>
-                  {product.name} - ${product.price}
+                  {product. productTitle} - Rs.{product.openingStockPrice}
                 </Dropdown.Item>
               ))}
             </Dropdown.Menu>
           </Dropdown>
 
-          <Row className="mb-4">
-            <Col md={4}>
-              <Form.Group controlId="shippingCharges">
-                <Form.Label>Shipping Charges</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={order.shippingCharges}
-                  onChange={(e) => {
-                    setOrder({ ...order, shippingCharges: e.target.value });
-                    calculateTotal();
-                  }}
-                />
-              </Form.Group>
+     
+
+           
+
+
+         
+          <Row className="mt-4">
+            <Col md={6}>
+              <h5>Total Amount:Rs. {order.totalAmount.toFixed(2)}</h5>
             </Col>
-            <Col md={4}>
-              <Form.Group controlId="adjustment">
-                <Form.Label>Adjustment</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={order.adjustment}
-                  onChange={(e) => {
-                    setOrder({ ...order, adjustment: e.target.value });
-                    calculateTotal();
-                  }}
-                />
-              </Form.Group>
-            </Col>
-            <Col md={4}>
-              <h4>Total Amount: ${order.totalAmount.toFixed(2)}</h4>
-            </Col>
+           
           </Row>
 
-          <Form.Group controlId="attachments">
-            <Form.Label>Attachments</Form.Label>
-            <Form.Control
-              type="file"
-              multiple
-              onChange={handleAttachmentChange}
-            />
-          </Form.Group>
+          {/* Submit button for the form */}
+          {/* Submit Sales Order button */}
+          <Button variant="primary" type="submit">Submit Sales Order</Button>
 
-          <Button variant="primary" type="submit">
-            Submit Sales Order
-          </Button>
         </Form>
+
       </div>
-      <Footer />
+
+      {/* Footer component included */}
+      {<Footer />}
+      
     </>
   );
 };

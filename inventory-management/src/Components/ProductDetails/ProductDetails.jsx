@@ -214,6 +214,11 @@ const ProductDetails = () => {
                         <p><strong>Weight:</strong> {selectedProduct.weight}</p>
                         <p><strong>Dimensions:</strong> {selectedProduct.dimensions}</p>
                         <p><strong>Units:</strong> {selectedProduct.units}</p>
+
+                        <p><strong>Opening Stock:</strong> {selectedProduct.openingStock}</p>
+                        <p><strong>Opening Stock Price:</strong> {selectedProduct.openingStockPrice}</p>
+                        <p><strong>Reorder Points:</strong> {selectedProduct.reorderPoint}</p>
+
                     </div>
                 </div>
             )}

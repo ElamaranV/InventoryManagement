@@ -107,4 +107,75 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+// PUT: Update a product by ID
+router.put('/:id', async (req, res) => {
+    // Log the incoming request body for debugging
+    console.log('Update Request Body:', req.body);
+
+    try {
+        const updatedFields = {};
+        
+        // Dynamically build the update object based on the fields present in the request
+        for (const [key, value] of Object.entries(req.body)) {
+            if (key === 'regularPrice' || key === 'salePrice' || key === 'openingStockPrice') {
+                updatedFields[key] = parseFloat(value);
+            } else if (key === 'units' || key === 'openingStock' || key === 'reorderPoint') {
+                updatedFields[key] = parseInt(value, 10);
+            } else {
+                updatedFields[key] = value;
+            }
+
+            // Validate numeric fields
+            if (['regularPrice', 'salePrice', 'openingStockPrice', 'units', 'openingStock', 'reorderPoint'].includes(key) && isNaN(updatedFields[key])) {
+                return res.status(400).json({ message: `Invalid numeric field: ${key}` });
+            }
+        }
+
+        const updatedProduct = await Product.findByIdAndUpdate(
+            req.params.id,
+            updatedFields,
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedProduct) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        res.json(updatedProduct);
+    } catch (error) {
+        console.error('Error updating product:', error);
+        res.status(500).json({ message: 'Error updating product', error });
+    }
+});
+
+// New route: PUT: Update product stock
+router.put('/:id/stock', async (req, res) => {
+    const { openingStockQuantity } = req.body;
+
+    // Log the incoming request body for debugging
+    console.log('Stock Update Request Body:', req.body);
+
+    // Validate and parse the openingStockQuantity
+    const parsedOpeningStockQuantity = parseInt(openingStockQuantity, 10);
+    if (isNaN(parsedOpeningStockQuantity)) {
+        return res.status(400).json({ message: 'Invalid openingStockQuantity' });
+    }
+
+    try {
+        const updatedProduct = await Product.findByIdAndUpdate(
+            req.params.id,
+            { openingStock: parsedOpeningStockQuantity },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedProduct) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        res.json(updatedProduct);
+    } catch (error) {
+        console.error('Error updating product stock:', error);
+        res.status(500).json({ message: 'Error updating product stock', error });
+    }
+});
 module.exports = router;
