@@ -7,6 +7,7 @@ const vendorRoutes = require('./routes/vendorRoutes');
 const productRoutes = require('./routes/productRoutes');
 const customerRoutes = require('./routes/customerRoutes');  
 const salesOrderRoutes = require('./routes/salesorder');
+const invoiceOrderRoutes = require('./routes/invoiceOrderRoutes');
 // Initialize Express
 const app = express();
 
@@ -194,6 +195,9 @@ app.use('/api/products', productRoutes);
 app.use('/api/vendors', vendorRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/salesorder', salesOrderRoutes);
+app.use('/api/invoiceorder', invoiceOrderRoutes);
+
+
 
 app.use('*', (req, res) => {
   console.log(`Received request for ${req.originalUrl}`);

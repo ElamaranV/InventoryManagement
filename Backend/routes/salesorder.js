@@ -54,4 +54,14 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.get('/', async (req, res) => {
+  try{
+  const salesorder = await SalesOrder.find();
+  res.json(salesorder);
+} catch(error){
+  console.error("Error fetching Sales Orders", error);
+  res.status(500).json({message : 'Error fetching sales orders', error});
+  }
+});
+
 module.exports = router;

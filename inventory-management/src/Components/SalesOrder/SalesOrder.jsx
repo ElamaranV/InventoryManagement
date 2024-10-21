@@ -80,18 +80,6 @@ const SalesOrder = () => {
     calculateTotal();
   };
 
-  const handleShippingChange = (e) => {
-    const value = Math.max(0, parseFloat(e.target.value) || 0); // Convert to number and ensure it's not negative
-    setOrder((prevOrder) => ({ ...prevOrder, shippingCharges: value }));
-    calculateTotal(); // Recalculate total
-  };
-  
-  const handleAdjustmentChange = (e) => {
-    const value = Math.max(0, parseFloat(e.target.value) || 0); // Convert to number and ensure it's not negative
-    setOrder((prevOrder) => ({ ...prevOrder, adjustment: value }));
-    calculateTotal(); // Recalculate total
-  };
-
   // Calculate total amount
   const calculateTotal = () => {
     const subTotal = order.items.reduce((sum, item) => sum + item.amount, 0);
@@ -323,11 +311,6 @@ const SalesOrder = () => {
               ))}
             </Dropdown.Menu>
           </Dropdown>
-
-     
-
-           
-
 
          
           <Row className="mt-4">

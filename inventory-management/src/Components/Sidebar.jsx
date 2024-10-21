@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { FaListAlt, FaUsers, FaChevronDown, FaChevronUp, FaShoppingCart, FaUserFriends, FaReceipt } from 'react-icons/fa';
+import { FaListAlt, FaUsers, FaChevronDown, FaChevronUp, FaShoppingCart, FaUserFriends, FaReceipt, FaFileInvoice } from 'react-icons/fa';
 import { IoAddCircleSharp } from "react-icons/io5";
 import { MdDashboard, MdCategory } from "react-icons/md";
 import './Sidebar.css';
@@ -102,6 +102,12 @@ const Sidebar = () => {
                   <NavLink to="/salesorder" className="nav-link sidebar-link">
                     <FaReceipt className="sidebar-icon" />
                     Sales Order
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="/invoice" className="nav-link sidebar-link">
+                    <FaFileInvoice className="sidebar-icon" />
+                    Inovice
                   </NavLink>
                 </li>
               </ul>
