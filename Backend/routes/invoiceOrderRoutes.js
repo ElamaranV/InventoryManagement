@@ -79,32 +79,50 @@ router.post('/', async (req, res) => {
 // Send invoice via email
 router.post('/sendInvoice/:id', async (req, res) => {
   try {
-    console.log(`Received Request to send Invoice for ID: ${req.params.id}`);
-    const invoiceOrder = await InvoiceOrder.findById(req.params.id).populate('customer'); // Assuming customer details are in a separate model
-    if (!invoiceOrder) return res.status(404).json({ message: 'Invoice not found' });
+    console.log(`Received Request to send Invoice for Sales Order ID: ${req.params.id}`);
+
+    // Fetch the Sales Order, which includes customer details and items
+    const salesOrder = await SalesOrder.findById(req.params.id).populate('customer'); // Populate customer details
+    if (!salesOrder) {
+      return res.status(404).json({ message: 'Sales Order not found' });
+    }
+
+    // Assuming that you want to create a new InvoiceOrder from the SalesOrder data
+    const invoiceDetails = {
+      customerName: `${salesOrder.customer.firstName} ${salesOrder.customer.lastName}`,
+      customerEmail: salesOrder.customer.email,
+      salesOrderNumber: salesOrder.salesOrderNumber,
+      salesOrderDate: salesOrder.salesOrderDate,
+      items: salesOrder.items, 
+      totalAmount: salesOrder.totalAmount,
+      paymentTerms: salesOrder.paymentTerms,
+      deliveryMethod: salesOrder.deliveryMethod,
+      shippingCharges: salesOrder.shippingCharges,
+      adjustment: salesOrder.adjustment,
+    };
 
     // Nodemailer configuration for sending email
     const transporter = nodemailer.createTransport({
       service: 'Gmail', 
       auth: {
         user: 'hathish113@gmail.com', 
-        pass: 'pqaa siov azdw yyrw',  
+        pass: 'qkmu ugty oiav hide', 
       },
     });
 
     // Email message options
     const mailOptions = {
       from: 'invoice-ea@gmail.com',
-      to: invoiceOrder.customerEmail, 
-      subject: `Invoice for Sales Order ${invoiceOrder.salesOrderNumber}`,
+      to: invoiceDetails.customerEmail, 
+      subject: `Invoice for Sales Order ${invoiceDetails.salesOrderNumber}`,
       html: `
         <h2>Invoice Details</h2>
-        <p><strong>Customer Name:</strong> ${invoiceOrder.customerName}</p>
-        <p><strong>Sales Order Number:</strong> ${invoiceOrder.salesOrderNumber}</p>
-        <p><strong>Sales Order Date:</strong> ${invoiceOrder.salesOrderDate.toLocaleDateString()}</p>
-        <p><strong>Total Amount:</strong> Rs. ${invoiceOrder.totalAmount.toFixed(2)}</p>
-        <p><strong>Payment Terms:</strong> ${invoiceOrder.paymentTerms || 'Not specified'}</p>
-        <p><strong>Delivery Method:</strong> ${invoiceOrder.deliveryMethod || 'Not specified'}</p>
+        <p><strong>Customer Name:</strong> ${invoiceDetails.customerName}</p>
+        <p><strong>Sales Order Number:</strong> ${invoiceDetails.salesOrderNumber}</p>
+        <p><strong>Sales Order Date:</strong> ${invoiceDetails.salesOrderDate.toLocaleDateString()}</p>
+        <p><strong>Total Amount:</strong> Rs. ${invoiceDetails.totalAmount.toFixed(2)}</p>
+        <p><strong>Payment Terms:</strong> ${invoiceDetails.paymentTerms || 'Not specified'}</p>
+        <p><strong>Delivery Method:</strong> ${invoiceDetails.deliveryMethod || 'Not specified'}</p>
         
         <h3>Products</h3>
         <table style="width: 100%; border-collapse: collapse;">
@@ -115,7 +133,7 @@ router.post('/sendInvoice/:id', async (req, res) => {
             <th style="border: 1px solid #000; padding: 8px;">Discount</th>
             <th style="border: 1px solid #000; padding: 8px;">Amount</th>
           </tr>
-          ${invoiceOrder.items.map(item => `
+          ${invoiceDetails.items.map(item => `
             <tr>
               <td style="border: 1px solid #000; padding: 8px;">${item.itemName}</td>
               <td style="border: 1px solid #000; padding: 8px;">${item.quantity}</td>
@@ -126,9 +144,9 @@ router.post('/sendInvoice/:id', async (req, res) => {
           `).join('')}
         </table>
 
-        <p><strong>Shipping Charges:</strong> Rs. ${invoiceOrder.shippingCharges.toFixed(2)}</p>
-        <p><strong>Adjustment:</strong> Rs. ${invoiceOrder.adjustment.toFixed(2)}</p>
-        <h3>Total Amount Due: Rs. ${invoiceOrder.totalAmount.toFixed(2)}</h3>
+        <p><strong>Shipping Charges:</strong> Rs. ${invoiceDetails.shippingCharges.toFixed(2)}</p>
+        <p><strong>Adjustment:</strong> Rs. ${invoiceDetails.adjustment.toFixed(2)}</p>
+        <h3>Total Amount Due: Rs. ${invoiceDetails.totalAmount.toFixed(2)}</h3>
         
         <p>Thank you for your business!</p>
       `,
@@ -142,6 +160,7 @@ router.post('/sendInvoice/:id', async (req, res) => {
       res.json({ message: 'Invoice sent successfully', info });
     });
   } catch (error) {
+    console.error('Error in sending invoice:', error);
     res.status(500).json({ message: 'Error sending invoice', error });
   }
 });

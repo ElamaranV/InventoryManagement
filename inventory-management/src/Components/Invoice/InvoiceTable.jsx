@@ -61,6 +61,7 @@ const SalesOrder = () => {
     try {
       const response = await axios.post(`http://localhost:5000/api/invoiceorder/sendInvoice/${selectedOrder._id}`);
       Alertify.success('Invoice sent to customer!');
+      console.log(response);
     } catch (error) {
       Alertify.error('Error sending email.');
       console.log(error);
