@@ -57,6 +57,13 @@ const AddProduct = () => {
       return;
     }
 
+    if (Number(units) < 0 || Number(regularPrice) < 0 || Number(openingStock) < 0 || 
+    Number(openingStockPrice) < 0 || Number(reorderPoint) < 0 || 
+    (salePrice && Number(salePrice) < 0)) {
+           alertify.error("Units, prices, and stock values cannot be less than 0.");
+            return;
+}
+
     const formData = new FormData();
     formData.append('productTitle', productTitle);
     formData.append('productDescription', productDescription);
