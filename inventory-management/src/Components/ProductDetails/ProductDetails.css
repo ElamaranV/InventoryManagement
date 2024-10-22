@@ -176,6 +176,10 @@
     align-items: center; /* Center vertically */
 }
 
+.red-highlight{
+    color:red;
+}
+
 .modal-content {
     background-color: white; /* Background color for modal content */
     padding: 20px; /* Padding inside modal */

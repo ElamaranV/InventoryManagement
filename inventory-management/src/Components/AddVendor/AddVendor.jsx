@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; 
-import './addVendor.css'; 
+import axios from 'axios';
+import { Form, Button, Col, Row, InputGroup, Container } from 'react-bootstrap';
 import Sidebar from '../Sidebar';
 import Footer from '../Footer';
 import alertify from 'alertifyjs';
+import './addVendor.css';
 
 const AddVendor = () => {
   const [vendor, setVendor] = useState({
     vendorID: '',
     vendorName: '',
+    countryCode: '+91',
     phoneNumber: '',
     email: '',
     companyName: '',
@@ -25,7 +27,14 @@ const AddVendor = () => {
   const [gstinError, setGstinError] = useState('');
   const [accountNumberError, setAccountNumberError] = useState('');
   const [ifscError, setIfscError] = useState('');
+  const [phoneNumberError, setPhoneNumberError] = useState('');
   const [copyBillingAddress, setCopyBillingAddress] = useState(false);
+  const countryCodes = [
+    { name: 'India', code: '+91' },
+    { name: 'United States', code: '+1' },
+    { name: 'United Kingdom', code: '+44' },
+    { name: 'Australia', code: '+61' },
+  ];
 
   useEffect(() => {
     const fetchLastVendorID = async () => {
@@ -68,6 +77,7 @@ const AddVendor = () => {
   const validateGSTIN = (gstin) => /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(gstin);
   const validateAccountNumber = (accountNumber) => /^[0-9]{9,18}$/.test(accountNumber);
   const validateIFSC = (ifsc) => /^[A-Z]{4}0[0-9]{6}$/.test(ifsc);
+  const validatePhoneNumber = (phoneNumber) => /^[0-9]{10}$/.test(phoneNumber);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -90,6 +100,12 @@ const AddVendor = () => {
     }
     setAccountNumberError('');
 
+    if (!validatePhoneNumber(vendor.phoneNumber)) {
+      setPhoneNumberError('Please enter a valid 10-digit phone number.');
+      return;
+    }
+    setPhoneNumberError('');
+
     if (!validateIFSC(vendor.ifsc)) {
       setIfscError('Please enter a valid IFSC code.');
       return;
@@ -103,6 +119,7 @@ const AddVendor = () => {
         vendorID: `VEN${parseInt(vendor.vendorID.replace('VEN', ''), 10) + 1}`,
         vendorName: '',
         phoneNumber: '',
+        countryCode: '+91',
         email: '',
         companyName: '',
         gstin: '',
@@ -121,84 +138,168 @@ const AddVendor = () => {
   return (
     <>
       <Sidebar />
-      <div className="container-fluid add-vendor-form">
+      <Container fluid className="add-vendor-form">
         <h2 className="my-4">Add New Vendor</h2>
         <hr />
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="vendorID">Vendor ID</label>
-            <input type="text" className="form-control" id="vendorID" name="vendorID" value={vendor.vendorID} readOnly />
-          </div>
+        <Form onSubmit={handleSubmit}>
+          <Row>
+            <Col md={6}>
+              <Form.Group controlId="vendorID">
+                <Form.Label>Vendor ID</Form.Label>
+                <Form.Control type="text" value={vendor.vendorID} readOnly />
+              </Form.Group>
+            </Col>
 
-          <div className="form-group">
-            <label htmlFor="vendorName">Vendor Name</label>
-            <input type="text" className="form-control" id="vendorName" name="vendorName" value={vendor.vendorName} onChange={handleChange} required />
-          </div>
+            <Col md={6}>
+              <Form.Group controlId="vendorName">
+                <Form.Label>Vendor Name</Form.Label>
+                <Form.Control type="text" name="vendorName" value={vendor.vendorName} onChange={handleChange} required />
+              </Form.Group>
+            </Col>
+          </Row>
 
-          <div className="form-group">
-            <label htmlFor="phoneNumber">Phone Number</label>
-            <input type="text" className="form-control" id="phoneNumber" name="phoneNumber" value={vendor.phoneNumber} onChange={handleChange} required />
-          </div>
+          <Row>
+            <Col md={6}>
+              <Form.Group controlId="phoneNumber">
+                <Form.Label>Phone Number</Form.Label>
+                <InputGroup>
+                  <Form.Select name="countryCode" value={vendor.countryCode} onChange={handleChange}>
+                    {countryCodes.map((country) => (
+                      <option key={country.code} value={country.code}>
+                        {country.name} ({country.code})
+                      </option>
+                    ))}
+                  </Form.Select>
+                  <Form.Control
+                    type="text"
+                    name="phoneNumber"
+                    value={vendor.phoneNumber}
+                    onChange={handleChange}
+                    required
+                  />
+                </InputGroup>
+                {phoneNumberError && <small className="text-danger">{phoneNumberError}</small>}
+              </Form.Group>
+            </Col>
 
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input type="email" className="form-control" id="email" name="email" value={vendor.email} onChange={handleChange} required />
-            {emailError && <small className="text-danger">{emailError}</small>}
-          </div>
+            <Col md={6}>
+              <Form.Group controlId="email">
+                <Form.Label>Email</Form.Label>
+                <Form.Control type="email" name="email" value={vendor.email} onChange={handleChange} required />
+                {emailError && <small className="text-danger">{emailError}</small>}
+              </Form.Group>
+            </Col>
+          </Row>
 
-          <div className="form-group">
-            <label htmlFor="companyName">Company Name</label>
-            <input type="text" className="form-control" id="companyName" name="companyName" value={vendor.companyName} onChange={handleChange} required />
-          </div>
+          <Row>
+            <Col md={6}>
+              <Form.Group controlId="companyName">
+                <Form.Label>Company Name</Form.Label>
+                <Form.Control type="text" name="companyName" value={vendor.companyName} onChange={handleChange} required />
+              </Form.Group>
+            </Col>
 
-          <div className="form-group">
-            <label htmlFor="gstin">GSTIN</label>
-            <input type="text" className="form-control" id="gstin" name="gstin" value={vendor.gstin} onChange={handleChange} required />
-            {gstinError && <small className="text-danger">{gstinError}</small>}
-          </div>
+            <Col md={6}>
+              <Form.Group controlId="gstin">
+                <Form.Label>GSTIN</Form.Label>
+                <Form.Control type="text" name="gstin" value={vendor.gstin} onChange={handleChange} required />
+                {gstinError && <small className="text-danger">{gstinError}</small>}
+              </Form.Group>
+            </Col>
+          </Row>
 
-          <div className="form-group">
-            <label htmlFor="billingAddress">Billing Address</label>
-            <textarea className="form-control" id="billingAddress" name="billingAddress" value={vendor.billingAddress} onChange={handleChange} required />
-          </div>
+          <Row>
+            <Col md={6}>
+              <Form.Group controlId="billingAddress">
+                <Form.Label>Billing Address</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  name="billingAddress"
+                  value={vendor.billingAddress}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+            </Col>
 
-          <div className="form-group">
-            <label htmlFor="shippingAddress">Shipping Address</label>
-            <textarea className="form-control" id="shippingAddress" name="shippingAddress" value={vendor.shippingAddress} onChange={handleChange} required />
-            <div className="form-check mt-2">
-              <input className="form-check-input" type="checkbox" checked={copyBillingAddress} onChange={handleCopyBillingAddress} />
-              <label className="form-check-label">Same as billing address</label>
-            </div>
-          </div>
+            <Col md={6}>
+              <Form.Group controlId="shippingAddress">
+                <Form.Label>Shipping Address</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  name="shippingAddress"
+                  value={vendor.shippingAddress}
+                  onChange={handleChange}
+                  required
+                />
+                <Form.Check
+                  type="checkbox"
+                  label="Same as billing address"
+                  checked={copyBillingAddress}
+                  onChange={handleCopyBillingAddress}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
 
-          <div className="form-group">
-            <label htmlFor="accountHolderName">Account Holder Name</label>
-            <input type="text" className="form-control" id="accountHolderName" name="accountHolderName" value={vendor.accountHolderName} onChange={handleChange} required />
-          </div>
+          <Row>
+            <Col md={6}>
+              <Form.Group controlId="accountHolderName">
+                <Form.Label>Account Holder Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="accountHolderName"
+                  value={vendor.accountHolderName}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+            </Col>
 
-          <div className="form-group">
-            <label htmlFor="bankName">Bank Name</label>
-            <input type="text" className="form-control" id="bankName" name="bankName" value={vendor.bankName} onChange={handleChange} required />
-          </div>
+            <Col md={6}>
+              <Form.Group controlId="bankName">
+                <Form.Label>Bank Name</Form.Label>
+                <Form.Control type="text" name="bankName" value={vendor.bankName} onChange={handleChange} required />
+              </Form.Group>
+            </Col>
+          </Row>
 
-          <div className="form-group">
-            <label htmlFor="accountNumber">Account Number</label>
-            <input type="text" className="form-control" id="accountNumber" name="accountNumber" value={vendor.accountNumber} onChange={handleChange} required />
-            {accountNumberError && <small className="text-danger">{accountNumberError}</small>}
-          </div>
+          <Row>
+            <Col md={6}>
+              <Form.Group controlId="accountNumber">
+                <Form.Label>Account Number</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="accountNumber"
+                  value={vendor.accountNumber}
+                  onChange={handleChange}
+                  required
+                />
+                {accountNumberError && <small className="text-danger">{accountNumberError}</small>}
+              </Form.Group>
+            </Col>
 
-          <div className="form-group">
-            <label htmlFor="ifsc">IFSC Code</label>
-            <input type="text" className="form-control" id="ifsc" name="ifsc" value={vendor.ifsc} onChange={handleChange} required />
-            {ifscError && <small className="text-danger">{ifscError}</small>}
-          </div>
+            <Col md={6}>
+              <Form.Group controlId="ifsc">
+                <Form.Label>IFSC</Form.Label>
+                <Form.Control type="text" name="ifsc" value={vendor.ifsc} onChange={handleChange} required />
+                {ifscError && <small className="text-danger">{ifscError}</small>}
+              </Form.Group>
+            </Col>
+          </Row>
 
-          <div className="button-container">
-            <button type="submit" className="btn btn-primary">Add Vendor</button>
-            <button type="button" className="btn btn-secondary" onClick={() => window.location.reload()}>Cancel</button>
+          <div className="mt-4 text-center">
+            <Button variant="primary" type="submit">
+              Add Vendor
+            </Button>{' '}
+            <Button variant="secondary" type="button" onClick={() => alertify.error('Cancelled')}>
+              Cancel
+            </Button>
           </div>
-        </form>
-      </div>
+        </Form>
+      </Container>
       <Footer />
     </>
   );

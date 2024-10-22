@@ -6,8 +6,6 @@ import Sidebar from '../Sidebar';
 import axios from 'axios';
 import Footer from "../Footer";
 
-
-
 const ProductDetails = () => {
     const [products, setProducts] = useState([]);
     const [vendors, setVendors] = useState([]);
@@ -123,13 +121,13 @@ const ProductDetails = () => {
                             >
                                 <option value="">All Categories</option>
                                 <option value="Electronics">Electronics</option>
-                  <option value="Fashion">Fashion</option>
-                  <option value="Home & Furniture">Home & Furniture</option>
-                  <option value="Sports and Outdoors">Sports and Outdoors</option>
-                  <option value="Health and wellness">Health and wellness</option>
-                  <option value="Toy and Baby products">Toy and Baby products</option>
-                  <option value="Books and Media">Books and Media</option>
-                  <option value="Groceries">Groceries</option>
+                                <option value="Fashion">Fashion</option>
+                                <option value="Home & Furniture">Home & Furniture</option>
+                                <option value="Sports and Outdoors">Sports and Outdoors</option>
+                                <option value="Health and wellness">Health and wellness</option>
+                                <option value="Toy and Baby products">Toy and Baby products</option>
+                                <option value="Books and Media">Books and Media</option>
+                                <option value="Groceries">Groceries</option>
                             </select>
 
                             <select 
@@ -199,26 +197,44 @@ const ProductDetails = () => {
                 <div className="modal-overlay">
                     <div className="modal-content">
                         <button onClick={closeModal} className="close-modal"><FaTimes /></button>
-                        <h2>{selectedProduct.productTitle}</h2>
+                        <h2 className={selectedProduct.openingStock < selectedProduct.reorderPoint ? 'red-highlight' : ''}>
+                            {selectedProduct.productTitle}
+                        </h2>
                         <img 
                             src={selectedProduct.imageUrl || '/default-image.jpg'}
                             alt={selectedProduct.productTitle}
                             className="modal-product-image" 
                         />
-                        <p><strong>Description:</strong> {selectedProduct.productDescription}</p>
-                        <p><strong>Category:</strong> {selectedProduct.category}</p>
-                        <p><strong>Vendor:</strong> {selectedProduct.vendor}</p>
-                        <p><strong>Regular Price:</strong> ${selectedProduct.regularPrice.toFixed(2)}</p>
-                        <p><strong>Sale Price:</strong> ${selectedProduct.salePrice ? selectedProduct.salePrice.toFixed(2) : 'N/A'}</p>
-                        <p><strong>SKU:</strong> {selectedProduct.sku}</p>
-                        <p><strong>Weight:</strong> {selectedProduct.weight}</p>
-                        <p><strong>Dimensions:</strong> {selectedProduct.dimensions}</p>
-                        <p><strong>Units:</strong> {selectedProduct.units}</p>
-
-                        <p><strong>Opening Stock:</strong> {selectedProduct.openingStock}</p>
-                        <p><strong>Opening Stock Price:</strong> {selectedProduct.openingStockPrice}</p>
-                        <p><strong>Reorder Points:</strong> {selectedProduct.reorderPoint}</p>
-
+                        <p className={selectedProduct.openingStock < selectedProduct.reorderPoint ? 'red-highlight' : ''}>
+                            <strong>Description:</strong> {selectedProduct.productDescription}
+                        </p>
+                        <p className={selectedProduct.openingStock < selectedProduct.reorderPoint ? 'red-highlight' : ''}>
+                            <strong>Category:</strong> {selectedProduct.category}
+                        </p>
+                        <p className={selectedProduct.openingStock < selectedProduct.reorderPoint ? 'red-highlight' : ''}>
+                            <strong>Vendor:</strong> {selectedProduct.vendor}
+                        </p>
+                        <p className={selectedProduct.openingStock < selectedProduct.reorderPoint ? 'red-highlight' : ''}>
+                            <strong>Regular Price:</strong> ${selectedProduct.regularPrice.toFixed(2)}
+                        </p>
+                        <p className={selectedProduct.openingStock < selectedProduct.reorderPoint ? 'red-highlight' : ''}>
+                            <strong>Sale Price:</strong> ${selectedProduct.salePrice ? selectedProduct.salePrice.toFixed(2) : 'N/A'}
+                        </p>
+                        <p className={selectedProduct.openingStock < selectedProduct.reorderPoint ? 'red-highlight' : ''}>
+                            <strong>SKU:</strong> {selectedProduct.sku}
+                        </p>
+                        <p className={selectedProduct.openingStock < selectedProduct.reorderPoint ? 'red-highlight' : ''}>
+                            <strong>Weight:</strong> {selectedProduct.weight}
+                        </p>
+                        <p className={selectedProduct.openingStock < selectedProduct.reorderPoint ? 'red-highlight' : ''}>
+                            <strong>Dimensions:</strong> {selectedProduct.dimensions}
+                        </p>
+                        <p className={selectedProduct.openingStock < selectedProduct.reorderPoint ? 'red-highlight' : ''}>
+                            <strong>Opening Stock:</strong> {selectedProduct.openingStock}
+                        </p>
+                        <p className={selectedProduct.openingStock < selectedProduct.reorderPoint ? 'red-highlight' : ''}>
+                            <strong>Reorder Point:</strong> {selectedProduct.reorderPoint}
+                        </p>
                     </div>
                 </div>
             )}

@@ -1,72 +1,79 @@
 .container-fluid.add-vendor-form {
-  margin-left: 250px; /* To adjust for the sidebar */
+  margin-left: 250px; /* Adjust to account for the sidebar */
   max-width: 100%;
-  padding: 20px;
+  padding: 40px; /* Increased padding to add breathing space */
+  box-sizing: border-box;
 }
 
 .add-vendor-form {
-  width: calc(100% - 250px); /* Adjust to fit next to Sidebar */
-  margin-left: 250px; /* Sidebar width, moves form to the left */
-  padding: 20px;
-  overflow-x: hidden; /* Disable horizontal scrolling */
+  width: calc(100% - 250px); /* Ensures form stretches, but within the box */
+  margin-left: 250px; /* Adjust for sidebar */
+  padding: 40px; /* Increased padding */
+  overflow-x: hidden; /* No horizontal scroll */
   box-sizing: border-box;
 }
 
 .add-vendor-form form {
-  max-width: 600px;
-  margin: 0; /* Centers the form */
+  max-width: 1000px; /* Stretching the form to a larger width */
+  margin: 0 auto; /* Centering form in its container */
 }
 
 .add-vendor-form .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 25px; /* Increased margin for better spacing */
 }
 
 .add-vendor-form label {
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 10px; /* Better separation between label and input */
 }
 
 .add-vendor-form input,
 .add-vendor-form textarea {
   width: 100%;
-  padding: 10px;
-  border-radius: 5px;
+  padding: 12px; /* Slightly larger padding for inputs */
+  border-radius: 6px;
   border: 1px solid #ccc;
+  font-size: 16px; /* Make text size larger for readability */
 }
 
 .add-vendor-form .btn-block {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
 }
 
 .add-vendor-form .button-container {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  margin-top: 30px; /* More space before buttons */
 }
 
 .button-container .btn {
   flex: 1;
-  margin: 0 10px;
+  margin: 0 15px; /* Increased margin between buttons */
 }
 
 @media (max-width: 768px) {
   .container-fluid.add-vendor-form {
     margin-left: 0;
-    padding: 10px;
+    padding: 20px; /* Adjusted padding for smaller screens */
+  }
+
+  .add-vendor-form {
+    width: 100%;
+    margin-left: 0; /* Remove margin for mobile */
   }
 
   .add-vendor-form form {
-    max-width: 100%;
+    max-width: 100%; /* Form takes full width on smaller screens */
   }
 
   .button-container {
     flex-direction: column;
-    align-items: center;
+    align-items: stretch; /* Align buttons vertically on small screens */
   }
 
   .button-container .btn {
-    width: 100%;
+    width: 100%; /* Buttons take full width on mobile */
     margin: 10px 0;
   }
 }

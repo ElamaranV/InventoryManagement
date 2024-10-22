@@ -13,12 +13,11 @@ const SalesOrder = () => {
     customer: '',
     salesOrderDate: '',
     expectedShipmentDate: '',
-    paymentTerms: '',
     deliveryMethod: '',
     salesperson: '',
     priceList: '',
     items: [],
-    shippingCharges: 0,
+    shippingCharges: 50,
     adjustment: 0,
     totalAmount: 0,
     termsAndConditions: '',
@@ -40,26 +39,69 @@ const SalesOrder = () => {
     fetchData();
   }, []);
 
+  const calculateBusinessDays = (startDate, days) => {
+    const resultDate = new Date(startDate);
+    let addedDays = 0;
+
+    while (addedDays < days) {
+        resultDate.setDate(resultDate.getDate() + 1);
+        // Check if it's a weekday (Monday to Friday)
+        if (resultDate.getDay() !== 0 && resultDate.getDay() !== 6) {
+            addedDays++;
+        }
+    }
+
+    return resultDate;
+};
+
+
+
   // Handle adding product to sales order
   const handleAddItem = (product) => {
-    const newItem = {
-      itemName: product.productTitle,
-      quantity: 1,
-      rate: product.openingStockPrice,
-      discount: 0,
-      amount: product.price,
-      productId: product._id // Capture the product ID for later use
-    };
-    setOrder({ ...order, items: [...order.items, newItem] });
+    const existingItemIndex = order.items.findIndex(item => item.productId === product._id);
+  
+    if (existingItemIndex !== -1) {
+      // If the product already exists, increment the quantity
+      const updatedItems = [...order.items];
+      updatedItems[existingItemIndex].quantity += 1; // Increment quantity by 1
+  
+      // Update the amount based on the new quantity
+      updatedItems[existingItemIndex].amount = updatedItems[existingItemIndex].quantity * updatedItems[existingItemIndex].rate
+        - (updatedItems[existingItemIndex].quantity * updatedItems[existingItemIndex].rate * updatedItems[existingItemIndex].discount / 100);
+  
+      setOrder(prevOrder => {
+        const newOrder = { ...prevOrder, items: updatedItems };
+        calculateTotal(newOrder); // Recalculate total after updating
+        return newOrder;
+      });
+    } else {
+      // If the product does not exist, add a new item
+      const newItem = {
+        itemName: product.productTitle,
+        quantity: 1,
+        rate: product.openingStockPrice,
+        discount: 0,
+        amount: product.price,
+        productId: product._id, // Capture the product ID for later use
+        openingStock: product.openingStock
+      };
+      setOrder({ ...order, items: [...order.items, newItem] });
+    }
   };
 
   // Handle removing product from sales order
   const handleRemoveItem = (index) => {
     const updatedItems = [...order.items];
     updatedItems.splice(index, 1);
-    setOrder({ ...order, items: updatedItems });
-    calculateTotal();
+  
+    // Update order first, then calculate total after state update
+    setOrder((prevOrder) => {
+      const newOrder = { ...prevOrder, items: updatedItems };
+      calculateTotal(newOrder);
+      return newOrder;
+    });
   };
+  
 
  
 
@@ -69,25 +111,39 @@ const SalesOrder = () => {
     const updatedItems = [...order.items];
     const quantity = Math.max(0, value); // Ensure quantity is not less than 0
 
+    // Update the quantity for the item
+    updatedItems[index].quantity = quantity;
+
+    // Calculate the new amount based on quantity, rate, and discount
+    updatedItems[index].amount = updatedItems[index].quantity * updatedItems[index].rate
+      - (updatedItems[index].quantity * updatedItems[index].rate * updatedItems[index].discount / 100);
+
+    // Set the new order state
+    setOrder(prevOrder => {
+      const newOrder = { ...prevOrder, items: updatedItems };
+      calculateTotal(newOrder); // Recalculate total based on the new order
+      return newOrder;
+    });
+
+    // Show warning if quantity is less than 0
     if (value < 0) {
       Alertify.warning('Quantity cannot be less than 0');
     }
+};
 
-    updatedItems[index].quantity = quantity;
-    updatedItems[index].amount = updatedItems[index].quantity * updatedItems[index].rate
-      - (updatedItems[index].quantity * updatedItems[index].rate * updatedItems[index].discount / 100);
-    setOrder({ ...order, items: updatedItems });
-    calculateTotal();
-  };
 
   // Calculate total amount
-  const calculateTotal = () => {
-    const subTotal = order.items.reduce((sum, item) => sum + item.amount, 0);
-    const shipping = Number(order.shippingCharges) || 0 ;
-    const adjustment = Number(order.adjustment) ||0;
-    const total = subTotal + shipping+ adjustment;
-    setOrder({ ...order, totalAmount: total });
+  const calculateTotal = (updatedOrder = order) => {
+    const subTotal = updatedOrder.items.reduce((sum, item) => sum + item.amount, 0);
+    const shipping = Number(updatedOrder.shippingCharges) || 0;
+    const adjustment = Number(updatedOrder.adjustment) || 0;
+    const cgst = subTotal * 0.09;
+    const sgst = subTotal * 0.09;
+    const total = subTotal + shipping + adjustment + cgst + sgst;
+  
+    setOrder({ ...updatedOrder, totalAmount: total.toFixed(2), cgst, sgst });
   };
+  
 
   // Update product stock after sales order submission
   const updateProductStock = async () => {
@@ -112,8 +168,23 @@ const SalesOrder = () => {
   // Handle sales order form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const exceedingStockItems = order.items.filter(item => item.quantity > item.openingStock);
+
+    if (exceedingStockItems.length > 0) {
+      Alertify.error('Some products exceed the available stock.');
+      return;
+    }
+
+    const orderData = {
+      ...order,
+      shippingCharges: order.shippingCharges,
+      cgst: order.cgst,
+      sgst: order.sgst,
+    };
+
     try {
-      await axios.post('http://localhost:5000/api/salesorder', order);
+      await axios.post('http://localhost:5000/api/salesorder', orderData);
       Alertify.success('Sales Order created successfully!');
 
       // Update the product stock after successful sales order submission
@@ -124,12 +195,11 @@ const SalesOrder = () => {
         customer: '',
         salesOrderDate: '',
         expectedShipmentDate: '',
-        paymentTerms: '',
         deliveryMethod: '',
         salesperson: '',
         priceList: '',
         items: [],
-        shippingCharges: 0,
+        shippingCharges: 50,
         adjustment: 0,
         totalAmount: 0,
         termsAndConditions: '',
@@ -171,44 +241,52 @@ const SalesOrder = () => {
               </Form.Group>
             </Col>
             <Col md={6}>
-              <Form.Group controlId="salesOrderDate">
-                <Form.Label>Sales Order Date</Form.Label>
-                <Form.Control
-                  type="date"
-                  value={order.salesOrderDate}
-                  onChange={(e) => setOrder({ ...order, salesOrderDate: e.target.value })}
-                  required
-                />
-              </Form.Group>
-            </Col>
+        <Form.Group controlId="salesOrderDate">
+          <Form.Label>Sales Order Date</Form.Label>
+          <Form.Control
+            type="date"
+            value={order.salesOrderDate}
+            onChange={(e) => {
+              const selectedDate = e.target.value;
+              const shipmentDate = calculateBusinessDays(selectedDate, 7);
+              
+              setOrder(prevOrder => ({
+                ...prevOrder,
+                salesOrderDate: selectedDate,
+                expectedShipmentDate: shipmentDate.toISOString().slice(0, 10),
+              }));
+
+              //Alertify.alert('Notice', 'The shipment will take at least 7 business days.');
+            }}
+            required
+          />
+        </Form.Group>
+      </Col>
           </Row>
 
           <Row className="mb-4">
+          <Col md={6}>
+        <Form.Group controlId="expectedShipmentDate">
+          <Form.Label>Expected Shipment Date</Form.Label><br/>
+          <small>Takes <b>7 business days</b></small>
+          <Form.Control
+            type="date"
+            value={order.expectedShipmentDate}
+            readOnly
+          />
+        </Form.Group>
+      </Col>
             <Col md={6}>
-              <Form.Group controlId="expectedShipmentDate">
-                <Form.Label>Expected Shipment Date</Form.Label>
+              <Form.Group controlId="salesperson">
+                <Form.Label>Salesperson</Form.Label>
                 <Form.Control
-                  type="date"
-                  value={order.expectedShipmentDate}
-                  onChange={(e) => setOrder({ ...order, expectedShipmentDate: e.target.value })}
+                  type="text"
+                  value={order.salesperson}
+                  onChange={(e) => setOrder({ ...order, salesperson: e.target.value })}
                 />
               </Form.Group>
             </Col>
-            <Col md={6}>
-              <Form.Group controlId="paymentTerms">
-                <Form.Label>Payment Terms</Form.Label>
-                <Form.Control
-                  as="select"
-                  value={order.paymentTerms}
-                  onChange={(e) => setOrder({ ...order, paymentTerms: e.target.value })}
-                >
-                  <option>Select payment terms</option>
-                  <option>Net 30</option>
-                  <option>Net 60</option>
-                  <option>Due on receipt</option>
-                </Form.Control>
-              </Form.Group>
-            </Col>
+
           </Row>
 
           <Row className="mb-4">
@@ -222,16 +300,7 @@ const SalesOrder = () => {
                 />
               </Form.Group>
             </Col>
-            <Col md={6}>
-              <Form.Group controlId="salesperson">
-                <Form.Label>Salesperson</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={order.salesperson}
-                  onChange={(e) => setOrder({ ...order, salesperson: e.target.value })}
-                />
-              </Form.Group>
-            </Col>
+            
           </Row>
 
           <Row className="mb-4">
@@ -241,6 +310,7 @@ const SalesOrder = () => {
                 <Form.Control
                   type="text"
                   value={order.priceList}
+                  placeholder='₹ INR'
                   onChange={(e) => setOrder({ ...order, priceList: e.target.value })}
                 />
               </Form.Group>
@@ -276,9 +346,9 @@ const SalesOrder = () => {
                   <td>{item.itemName}</td>
                   <td>
                     <Form.Control
-                      type="number"
+                      type="text"
                       value={item.quantity}
-                      onChange={(e) => handleQuantityChange(index, e.target.value)}
+                      onChange={(e) => handleQuantityChange(index, Number(e.target.value))}
                     />
                   </td>
                   <td>{item.rate}</td>
@@ -313,14 +383,16 @@ const SalesOrder = () => {
           </Dropdown>
 
          
-          <Row className="mt-4">
+          <Row className="mt-4 justify-content-end">
             <Col md={6}>
-              <h5>Total Amount:Rs. {order.totalAmount.toFixed(2)}</h5>
+            <h5>Sub Total: Rs. {order.items.reduce((sum, item) => sum + item.amount, 0).toFixed(2)}</h5>
+            <h5>CGST (9%): Rs. {(Number(order.cgst) || 0).toFixed(2)}</h5>
+            <h5>SGST (9%): Rs. {(Number(order.sgst) || 0).toFixed(2)}</h5>
+            <h5>Shipping Charges: Rs. {(Number(order.shippingCharges) || 0).toFixed(2)}</h5>
+            <h5>Total Amount: Rs. {(Number(order.totalAmount) || 0).toFixed(2)}</h5>
             </Col>
            
           </Row>
-
-          {/* Submit button for the form */}
           {/* Submit Sales Order button */}
           <Button variant="primary" type="submit">Submit Sales Order</Button>
 

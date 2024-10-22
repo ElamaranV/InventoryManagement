@@ -13,7 +13,6 @@ const InvoiceOrderSchema = new Schema({
   customerEmail: { type: String, required: true }, // Store customer email
   salesOrderDate: { type: Date, required: true },
   expectedShipmentDate: { type: Date, required: true },
-  paymentTerms: { type: String },
   deliveryMethod: { type: String },
   salesperson: { type: String },
   items: [
@@ -25,7 +24,9 @@ const InvoiceOrderSchema = new Schema({
       amount: { type: Number, required: true },
     }
   ],
-  shippingCharges: { type: Number, default: 0 },
+  shippingCharges: { type: Number, default: 50 }, // Set default shipping charges
+  cgst: { type: Number, default: 0 }, // Set default CGST
+  sgst: { type: Number, default: 0 }, // Set default SGST
   adjustment: { type: Number, default: 0 },
   totalAmount: { type: Number, required: true },
   termsAndConditions: { type: String },

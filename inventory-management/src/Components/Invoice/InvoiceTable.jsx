@@ -5,7 +5,7 @@ import Alertify from 'alertifyjs';
 import Sidebar from '../Sidebar';
 import Footer from '../Footer';
 
-const SalesOrder = () => {
+const InvoiceTable = () => {
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
   const [salesOrders, setSalesOrders] = useState([]);
@@ -89,7 +89,7 @@ const SalesOrder = () => {
             {salesOrders.map((order) => (
               <tr key={order._id}>
                 <td>{order.salesOrderNumber}</td>
-                <td>{customers.find((c) => c._id === order.customer)?.firstName}</td>
+                <td>{customers.find((c) => c._id === order.customer)?.firstName || 'N/A'}</td>
                 <td>{new Date(order.salesOrderDate).toLocaleDateString()}</td>
                 <td>Rs. {order.totalAmount.toFixed(2)}</td>
                 <td>
@@ -113,16 +113,18 @@ const SalesOrder = () => {
             <>
               <Row>
                 <Col md={6}>
-                  <h5>Customer: {invoiceDetails.customerName}</h5>
-                  <p>Sales Order Date: {new Date(invoiceDetails.salesOrderDate).toLocaleDateString()}</p>
-                  <p>Expected Shipment Date: {new Date(invoiceDetails.expectedShipmentDate).toLocaleDateString()}</p>
-                  <p>Payment Terms: {invoiceDetails.paymentTerms}</p>
+                  <h5>Customer: {invoiceDetails.customerName || 'N/A'}</h5>
+                  <p>Sales Order Date: {new Date(invoiceDetails.salesOrderDate).toLocaleDateString() || 'N/A'}</p>
+                  <p>Expected Shipment Date: {new Date(invoiceDetails.expectedShipmentDate).toLocaleDateString() || 'N/A'}</p>
+                  <p>Payment Terms: {invoiceDetails.paymentTerms || 'N/A'}</p>
                 </Col>
                 <Col md={6}>
-                  <p>Delivery Method: {invoiceDetails.deliveryMethod}</p>
-                  <p>Salesperson: {invoiceDetails.salesperson}</p>
-                  <p>Shipping Charges: Rs. {invoiceDetails.shippingCharges}</p>
-                  <p>Adjustment: Rs. {invoiceDetails.adjustment}</p>
+                  <p>Delivery Method: {invoiceDetails.deliveryMethod || 'N/A'}</p>
+                  <p>Salesperson: {invoiceDetails.salesperson || 'N/A'}</p>
+                  <p>Shipping Charges: Rs. {invoiceDetails.shippingCharges || 0}</p>
+                  <p>CGST: Rs. {invoiceDetails.cgst || 0}</p>
+                  <p>SGST: Rs. {invoiceDetails.sgst || 0}</p>
+                  <p>Adjustment: Rs. {invoiceDetails.adjustment || 0}</p>
                 </Col>
               </Row>
 
@@ -137,15 +139,21 @@ const SalesOrder = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {invoiceDetails.items.map((item, index) => (
-                    <tr key={index}>
-                      <td>{item.itemName}</td>
-                      <td>{item.quantity}</td>
-                      <td>Rs. {item.rate}</td>
-                      <td>{item.discount}%</td>
-                      <td>Rs. {item.amount.toFixed(2)}</td>
+                  {invoiceDetails.items && invoiceDetails.items.length > 0 ? (
+                    invoiceDetails.items.map((item, index) => (
+                      <tr key={index}>
+                        <td>{item.itemName || 'N/A'}</td>
+                        <td>{item.quantity || 0}</td>
+                        <td>Rs. {item.rate.toFixed(2) || 0}</td>
+                        <td>{item.discount}%</td>
+                        <td>Rs. {item.amount.toFixed(2) || 0}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="5" className="text-center">No items found</td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </Table>
               <h5 className="text-right mt-4">Total Amount: Rs. {invoiceDetails.totalAmount.toFixed(2)}</h5>
@@ -166,4 +174,4 @@ const SalesOrder = () => {
   );
 };
 
-export default SalesOrder;
+export default InvoiceTable;
