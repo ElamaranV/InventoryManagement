@@ -175,7 +175,7 @@ const ProductDetails = () => {
                                                 {product.productTitle}
                                             </a>
                                         </td>
-                                        <td>${product.regularPrice.toFixed(2)}</td>
+                                        <td>Rs.{product.regularPrice.toFixed(2)}</td>
                                         <td>{product.category}</td>
                                         <td>{product.vendor}</td>
                                         <td>{new Date(product.publishedOn).toLocaleDateString()}</td> {/* Format date */}
@@ -215,10 +215,10 @@ const ProductDetails = () => {
                             <strong>Vendor:</strong> {selectedProduct.vendor}
                         </p>
                         <p className={selectedProduct.openingStock < selectedProduct.reorderPoint ? 'red-highlight' : ''}>
-                            <strong>Regular Price:</strong> ${selectedProduct.regularPrice.toFixed(2)}
+                            <strong>Regular Price:</strong> Rs.{selectedProduct.regularPrice.toFixed(2)}
                         </p>
                         <p className={selectedProduct.openingStock < selectedProduct.reorderPoint ? 'red-highlight' : ''}>
-                            <strong>Sale Price:</strong> ${selectedProduct.salePrice ? selectedProduct.salePrice.toFixed(2) : 'N/A'}
+                            <strong>Sale Price:</strong> Rs.{selectedProduct.salePrice ? selectedProduct.salePrice.toFixed(2) : 'N/A'}
                         </p>
                         <p className={selectedProduct.openingStock < selectedProduct.reorderPoint ? 'red-highlight' : ''}>
                             <strong>SKU:</strong> {selectedProduct.sku}

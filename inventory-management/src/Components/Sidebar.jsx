@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { FaListAlt, FaUsers, FaChevronDown, FaChevronUp, FaShoppingCart, FaUserFriends, FaReceipt, FaFileInvoice } from 'react-icons/fa';
+import { NavLink , useNavigate} from 'react-router-dom';
+import { FaListAlt, FaUsers, FaChevronDown, FaChevronUp, FaShoppingCart, FaUserFriends, FaReceipt, FaFileInvoice ,  FaSignOutAlt} from 'react-icons/fa';
 import { IoAddCircleSharp } from "react-icons/io5";
 import { MdDashboard, MdCategory } from "react-icons/md";
 import './Sidebar.css';
@@ -9,11 +9,21 @@ const Sidebar = () => {
   const [isProductsOpen, setIsProductsOpen] = useState(false);
   const [isVendorsOpen, setIsVendorsOpen] = useState(false);
   const [isSalesOpen, setIsSalesOpen] = useState(false); // New state for Sales dropdown
+  const navigate =useNavigate();
+
 
   const toggleProducts = () => setIsProductsOpen(!isProductsOpen);
   const toggleVendors = () => setIsVendorsOpen(!isVendorsOpen);
   const toggleSales = () => setIsSalesOpen(!isSalesOpen); // Toggle Sales dropdown
 
+  const handleLogout = () => {
+    const confirmLogout = window.confirm("Are you sure you want to log out?");
+    if (confirmLogout) {
+            alert("Thanks for using EA Inventory");
+
+      navigate('/'); // Redirect to root page
+    }
+  };
   return (
     <nav className="navbar navbar-expand-lg sidebar">
       <img src="/logo.jpg" alt='logo' className='sidebar-logo' />
@@ -113,8 +123,17 @@ const Sidebar = () => {
               </ul>
             )}
           </li>
+
+          
         </ul>
       </div>
+       {/* Logout Button */}
+       <li className="nav-item mt-auto">
+            <div className="nav-link sidebar-link logout-link" onClick={handleLogout}>
+              <FaSignOutAlt className="sidebar-icon" />
+              Logout
+            </div>
+          </li>
     </nav>
   );
 };

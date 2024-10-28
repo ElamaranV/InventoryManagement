@@ -243,7 +243,7 @@ export default function Dashboard() {
             </select>
 
             {selectedProductId && (
-              <p style={{ fontWeight: 'bold', fontSize: '20px' }}>Available Products: {selectedProductStock}</p>
+              <p style={{ fontWeight: 'bold', fontSize: '20px' }}>Available Product Quantity: {selectedProductStock}</p>
             )}
 
             <div className="inventory-summary">

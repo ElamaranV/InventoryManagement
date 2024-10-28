@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ChevronDown, Menu, Plus, Search, Settings, User, Edit, Trash } from "lucide-react";
+import { ChevronDown, Menu, Plus, Search,  Edit, Trash } from "lucide-react";
 import { useNavigate } from "react-router-dom"; 
 import Sidebar from "../Sidebar";
 import Footer from "../Footer";
@@ -58,10 +58,10 @@ export default function CustomerPage() {
         </button>
         <div className="d-flex align-items-center">
           <h1 className="h4 mb-0">Contacts</h1>
-          <div className="position-relative mx-3">
+          <div className="position-relative ml-5">
             <Search className="position-absolute" style={{ left: "10px", top: "10px" }} />
             <input
-              className="form-control ps-5"
+              className="form-control ps-5 ml-3"
               type="search"
               placeholder="Search contacts..."
               value={searchTerm}
@@ -69,14 +69,7 @@ export default function CustomerPage() {
             />
           </div>
         </div>
-        <div className="d-flex align-items-center">
-          <button className="btn btn-link" title="Settings">
-            <Settings className="h5" />
-          </button>
-          <button className="btn btn-link" title="User menu">
-            <User className="h5" />
-          </button>
-        </div>
+       
       </header>
 
       <div className="d-flex flex-grow-1 overflow-hidden">

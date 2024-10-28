@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './Login.css';
 import { Form, Button, Alert } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -10,6 +11,7 @@ const Login = () => {
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -34,26 +36,17 @@ const Login = () => {
     e.preventDefault();
     setError('');
     setSuccess('');
-  
+
     try {
       const response = await axios.post('http://localhost:5000/api/verify-otp', { email, otp });
       if (response.data.success) {
         setSuccess('OTP verified. Redirecting to dashboard...');
         
-        // Redirect to dashboard after OTP verification
+        // Navigate to the dashboard after OTP verification
         setTimeout(() => {
-          window.location.href = '/dashboard'; // Redirect to dashboard page
+          navigate('/dashboard'); // Redirects within the app without changing the URL immediately
         }, 2000); // 2 seconds delay for a better user experience
-  
-        // Commented code to prevent manual URL change to access the dashboard
-        /*
-        const protectRoute = () => {
-          if (!response.data.success) {
-            window.location.href = '/login'; // Redirect to login if not verified
-          }
-        };
-        protectRoute();
-        */
+        
       } else {
         setError(response.data.message);
       }
@@ -62,7 +55,6 @@ const Login = () => {
       setError('An error occurred during OTP verification.');
     }
   };
-  
 
   return (
     <div className="login-container">
