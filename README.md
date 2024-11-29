@@ -2,6 +2,9 @@
 
 **EA INVENTORY** is a robust Inventory Management System designed to help businesses streamline their inventory processes. It provides essential tools to track stock levels, manage orders, oversee sales and deliveries, and ensure optimal inventory control.  
 
+- FrontEnd: React, React Bootstrap, CSS
+- Backend: Node, Express, MongoDB
+
 ## Key Features  
 
 ### 1. **Stock Control and Monitoring**  
