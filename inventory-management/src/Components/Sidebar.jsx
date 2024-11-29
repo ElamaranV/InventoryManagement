@@ -8,20 +8,20 @@ import './Sidebar.css';
 const Sidebar = () => {
   const [isProductsOpen, setIsProductsOpen] = useState(false);
   const [isVendorsOpen, setIsVendorsOpen] = useState(false);
-  const [isSalesOpen, setIsSalesOpen] = useState(false); // New state for Sales dropdown
+  const [isSalesOpen, setIsSalesOpen] = useState(false); 
   const navigate =useNavigate();
 
 
   const toggleProducts = () => setIsProductsOpen(!isProductsOpen);
   const toggleVendors = () => setIsVendorsOpen(!isVendorsOpen);
-  const toggleSales = () => setIsSalesOpen(!isSalesOpen); // Toggle Sales dropdown
+  const toggleSales = () => setIsSalesOpen(!isSalesOpen); 
 
   const handleLogout = () => {
     const confirmLogout = window.confirm("Are you sure you want to log out?");
     if (confirmLogout) {
             alert("Thanks for using EA Inventory");
 
-      navigate('/'); // Redirect to root page
+      navigate('/');
     }
   };
   return (

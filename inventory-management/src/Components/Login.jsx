@@ -1,8 +1,11 @@
+// Login.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import './Login.css';
 import { Form, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../auth/AuthContext';
+
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -12,6 +15,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -42,11 +46,12 @@ const Login = () => {
       if (response.data.success) {
         setSuccess('OTP verified. Redirecting to dashboard...');
         
+        login(); // Set authentication state to true
+
         // Navigate to the dashboard after OTP verification
         setTimeout(() => {
-          navigate('/dashboard'); // Redirects within the app without changing the URL immediately
-        }, 2000); // 2 seconds delay for a better user experience
-        
+          navigate('/dashboard');
+        }, 2000);
       } else {
         setError(response.data.message);
       }
